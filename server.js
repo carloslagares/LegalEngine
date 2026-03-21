@@ -200,7 +200,12 @@ app.get('/api/regions', (req, res) => {
   res.json(regions);
 });
 
-// ── Start ──
+// routes
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
+// start server
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`LegalEngine running on port ${PORT}`);
 });
