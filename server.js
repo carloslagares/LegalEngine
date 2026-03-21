@@ -201,6 +201,6 @@ app.get('/api/regions', (req, res) => {
 });
 
 // ── Start ──
-app.listen(PORT, () => {
-  console.log(`LegalEngine running at http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`LegalEngine running on port ${PORT}`);
 });
