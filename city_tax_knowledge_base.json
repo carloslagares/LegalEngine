@@ -1,0 +1,286 @@
+{
+  "metadata": {
+    "title": "City Tax Knowledge Base - Consolidated Context",
+    "created_utc": "2026-03-21T15:37:11.607575Z",
+    "purpose": "Context package for an internal agent answering questions about tourist/city taxes by region/city.",
+    "scope_note": "This package consolidates information shared in the working discussion and uploaded internal datasets. It is not a full authoritative legal database and should be treated as a governed operational knowledge base.",
+    "recommended_usage": [
+      "Use this as context for internal Q&A and project planning.",
+      "Do not present every city entry as legally authoritative unless separately validated against official sources.",
+      "Where confidence is high but classification is missing, position results as structured operational intelligence rather than certified legal truth."
+    ]
+  },
+  "dataset_findings": {
+    "base_coverage": {
+      "properties_with_active_tax_rules": 10311,
+      "unique_cities": 1314,
+      "countries": 41
+    },
+    "stability": {
+      "cities_in_agreement_dataset": 1388,
+      "cities_in_variance_dataset": 1356,
+      "cities_with_100_percent_rule_type_agreement": 1372,
+      "cities_with_rule_type_agreement_over_90_percent": 1377,
+      "cities_with_rule_type_agreement_over_80_percent": 1381,
+      "cities_with_zero_stddev_price_per_night": 329,
+      "cities_with_high_stddev_over_5": 24
+    },
+    "coverage_concentration": {
+      "top_50_cities_coverage_pct_of_internal_footprint": 60.3,
+      "top_100_cities_coverage_pct_of_internal_footprint": 72.32,
+      "narrative": "A phased rollout focused on the top 50-100 cities captures most of the high-density operational footprint and likely ~75-85% of high-volume European urban tourism."
+    },
+    "top_50_density_stats": {
+      "average_properties_per_city": 124.36,
+      "max_properties_in_one_city": 674,
+      "min_properties_in_top_50": 36
+    }
+  },
+  "strategic_conclusions": {
+    "key_takeaway": "The current tax calculator can be naturally amplified into a structured European Tourist Tax Intelligence layer.",
+    "why": [
+      "The dataset is large enough to be meaningful.",
+      "Rule-type agreement is extremely high across cities.",
+      "Most major tourism cities are structurally stable.",
+      "The main gap is the lack of explicit accommodation classification (hotel stars / official category)."
+    ],
+    "main_gap": {
+      "missing_field": "official accommodation classification / property category",
+      "impact": [
+        "Some cities (e.g. Barcelona, France) have tax tiers that vary by hotel class or accommodation type.",
+        "Observed host-configured values do not automatically equal the official legal tier structure.",
+        "A city-level regulatory model is stronger than a purely host-derived average."
+      ]
+    }
+  },
+  "recommended_data_model": {
+    "entity": "CityTaxProfile",
+    "fields": [
+      "country",
+      "region",
+      "city",
+      "rule_type",
+      "calculation_basis",
+      "price_per_night",
+      "percentage_per_booking",
+      "max_nights",
+      "exemptions",
+      "effective_date",
+      "version_id",
+      "confidence_level",
+      "source_type",
+      "tiers_by_accommodation_category"
+    ]
+  },
+  "delivery_models": {
+    "recommended": "smart_hybrid",
+    "description": "Structured dataset for internal quote simulations + authoritative validation API at booking confirmation."
+  },
+  "commercial_working_assumptions": {
+    "setup_fee_eur": 7000,
+    "monthly_license_eur": 7000,
+    "go_live_rule": "Recurring fee starts when the solution goes live in production.",
+    "initial_timeline": {
+      "top_50_european_cities": "4-6 weeks",
+      "top_100_european_cities": "up to 8 weeks"
+    }
+  },
+  "known_markets": {
+    "high_confidence_countries": [
+      "Italy",
+      "Portugal",
+      "Spain (core regions such as Catalonia and Balearics)",
+      "Czech Republic (structurally consistent, but pricing variance in Prague requires refinement)"
+    ],
+    "france": {
+      "cities_with_tax_rules_in_internal_dataset": 82,
+      "properties_with_tax_rules": 456,
+      "top_cities_by_internal_density": [
+        {
+          "city": "Valras-Plage",
+          "properties": 126
+        },
+        {
+          "city": "Paris",
+          "properties": 72
+        },
+        {
+          "city": "Cannes",
+          "properties": 44
+        },
+        {
+          "city": "Sérignan",
+          "properties": 35
+        },
+        {
+          "city": "Béziers",
+          "properties": 9
+        },
+        {
+          "city": "Vendres",
+          "properties": 7
+        },
+        {
+          "city": "Agde",
+          "properties": 6
+        },
+        {
+          "city": "Vias",
+          "properties": 4
+        }
+      ]
+    },
+    "spain": {
+      "madrid_internal_properties_with_tax_config": 49,
+      "sevilla_internal_properties_with_tax_config": 44
+    }
+  },
+  "city_profiles": [
+    {
+      "city": "Barcelona",
+      "country": "Spain",
+      "region": "Catalonia",
+      "internal_dataset_signals": {
+        "properties_observed": [
+          674,
+          662
+        ],
+        "rule_type_agreement_pct": [
+          99.57,
+          100.0
+        ],
+        "average_price_per_night": [
+          5.279327,
+          5.418338
+        ],
+        "stddev_price_per_night": [
+          2.409936,
+          1.18406
+        ]
+      },
+      "official_logic_shared_in_workstream": {
+        "rule_shape": "fixed per person per night, tiered by accommodation category, with Barcelona municipal surcharge",
+        "illustrative_tiers_shared": [
+          {
+            "category": "5-star / luxury hotels",
+            "total_per_person_per_night_eur": 15.0
+          },
+          {
+            "category": "4-star hotels",
+            "total_per_person_per_night_eur": 11.4
+          },
+          {
+            "category": "tourist apartments / VUT",
+            "total_per_person_per_night_eur": 12.5
+          },
+          {
+            "category": "other accommodations",
+            "total_per_person_per_night_eur": 10.0
+          }
+        ]
+      },
+      "confidence": "high for structure, medium for exact tier mapping unless category is explicitly stored"
+    },
+    {
+      "city": "Rome",
+      "country": "Italy",
+      "internal_dataset_signals": {
+        "properties_observed": 510,
+        "rule_type_agreement_pct": 100.0,
+        "average_price_per_night": 6.015474,
+        "stddev_price_per_night": 0.748352
+      }
+    },
+    {
+      "city": "Prague",
+      "country": "Czech Republic",
+      "internal_dataset_signals": {
+        "properties_observed": 416,
+        "rule_type_agreement_pct": 100.0,
+        "average_price_per_night": 34.479286,
+        "stddev_price_per_night": 22.360974
+      }
+    },
+    {
+      "city": "Milan",
+      "country": "Italy",
+      "internal_dataset_signals": {
+        "properties_observed": 284,
+        "rule_type_agreement_pct": 100.0,
+        "average_price_per_night": 7.623875,
+        "stddev_price_per_night": 2.394413
+      }
+    },
+    {
+      "city": "Porto",
+      "country": "Portugal",
+      "internal_dataset_signals": {
+        "properties_observed": 245,
+        "rule_type_agreement_pct": 100.0,
+        "average_price_per_night": 2.02449,
+        "stddev_price_per_night": 0.15488
+      }
+    },
+    {
+      "city": "Mallorca",
+      "country": "Spain",
+      "internal_dataset_signals": {
+        "properties_observed": 182,
+        "rule_type_agreement_pct": 100.0,
+        "average_price_per_night": 1.375344,
+        "stddev_price_per_night": 0.8221
+      }
+    },
+    {
+      "city": "Lisbon",
+      "country": "Portugal",
+      "internal_dataset_signals": {
+        "properties_observed": 179,
+        "rule_type_agreement_pct": 100.0,
+        "average_price_per_night": 2.480663,
+        "stddev_price_per_night": 0.868211
+      }
+    },
+    {
+      "city": "Lucca",
+      "country": "Italy",
+      "internal_dataset_signals": {
+        "properties_observed": 141,
+        "rule_type_agreement_pct": 100.0,
+        "average_price_per_night": 3.5,
+        "stddev_price_per_night": 0.0
+      }
+    }
+  ],
+  "global_complexity_notes": {
+    "europe": "Mostly municipality-based, often fixed per person per night, with caps, exemptions and in some cases category-based tiers.",
+    "france": "Higher complexity due to municipal + departmental + regional layers and classification-based logic.",
+    "united_states": {
+      "summary": "A stacked percentage-based model rather than a single city tax.",
+      "common_layers": [
+        "state sales tax",
+        "county tax",
+        "city occupancy tax",
+        "special district or tourism improvement fees"
+      ],
+      "other_mandatory_fees": [
+        "resort fee",
+        "destination fee",
+        "facility fee",
+        "urban fee",
+        "cleaning fee in STR contexts"
+      ]
+    }
+  },
+  "known_limitations": [
+    "The analyzed internal dataset does not explicitly include hotel star rating or official accommodation category.",
+    "Some internal city configurations may exist even where a formal municipal tax does not currently exist in law.",
+    "For category-driven cities, exact legal calculation requires either explicit category data or an official tier table."
+  ],
+  "recommended_next_steps": [
+    "Maintain a structured CityTaxProfile table rather than only host-derived averages.",
+    "For top 50-100 European cities, build or validate tier tables manually against official sources.",
+    "Use quarterly governance and versioning.",
+    "For internal Q&A, always label answers by confidence level."
+  ]
+}
