@@ -65,48 +65,64 @@ function loadKnowledge() {
 const knowledge = loadKnowledge();
 
 // ── System prompt ──
-const SYSTEM_PROMPT = `You are the Chekin Compliance Assistant, an expert on vacation rental (VUT — Vivienda de Uso Turístico) regulations in Spain.
+const SYSTEM_PROMPT = `You are the Chekin Compliance Assistant, an expert on vacation rental (VUT — Vivienda de Uso Turístico) regulations in Spain and Europe.
 
 Your role is to answer questions about:
 - Tourist license registration and requirements
 - Guest reporting obligations (SES.HOSPEDAJES, police registration)
 - Identity verification requirements
 - Regional regulations, zoning, and restrictions
-- Taxes (tourist tax, IGIC, IVA)
+- City tax / tourist tax rates and rules across European cities
+- Taxes (tourist tax, IGIC, IVA, income tax on rentals)
+- Electronic invoicing requirements
 - Required documentation and administrative procedures
 - Fines and penalties for non-compliance
 
 RULES:
 1. Answer based ONLY on the guide content provided. Do not invent requirements.
-2. If the information is not in the provided guides, say so clearly and recommend consulting a lawyer.
-3. Always cite the specific region when relevant.
+2. If the information is not in the provided guides, say so clearly and recommend consulting a lawyer or checking official sources.
+3. Always cite the specific region or city when relevant.
 4. Format your answers in HTML using <strong>, <ul>/<li>, <ol>/<li>, and <p> tags.
 5. Keep answers concise but thorough (2-4 paragraphs or a structured list).
 6. Answer in the same language the user writes in (Spanish or English).
 7. When listing steps, use numbered lists (<ol>).
-8. If the user asks about a region not covered by the guides, say that region is not yet available and list the regions that are.`;
+8. If the user asks about a region not covered by the guides, say that region is not yet available and list the regions that are.
+9. For city tax questions, include the rate, who pays, exemptions, and how it is calculated when the data is available.`;
 
 // ── Guide resolution ──
-function resolveGuides(question, regionParam) {
-  // If explicit region parameter, use it directly
-  if (regionParam && knowledge[regionParam]) {
-    return [{ slug: regionParam, ...knowledge[regionParam] }];
-  }
+// Thematic keywords that should also pull in a thematic guide
+const THEMATIC_TRIGGERS = {
+  'city-tax': /city.?tax|tourist.?tax|tasa.?tur|impuesto.?tur|accommodation.?tax|taxe|kurtaxe|its\b|tourist.?levy|tax.?rate|impuesto.?sostenible/i
+};
 
-  // Try to detect region from the question text
+function resolveGuides(question, regionParam) {
   const q = question.toLowerCase().normalize('NFC');
   const matched = [];
 
-  for (const [slug, meta] of Object.entries(knowledge)) {
-    const allTerms = [meta.name.toLowerCase(), ...meta.aliases];
-    if (allTerms.some(term => q.includes(term))) {
-      matched.push({ slug, ...meta });
+  // If explicit region parameter, start with that guide
+  if (regionParam && knowledge[regionParam]) {
+    matched.push({ slug: regionParam, ...knowledge[regionParam] });
+  } else {
+    // Try to detect region from the question text
+    for (const [slug, meta] of Object.entries(knowledge)) {
+      if (meta.type === 'thematic') continue; // thematic guides handled below
+      const allTerms = [meta.name.toLowerCase(), ...meta.aliases];
+      if (allTerms.some(term => q.includes(term))) {
+        matched.push({ slug, ...meta });
+      }
+    }
+  }
+
+  // Also check if any thematic guide should be included
+  for (const [slug, regex] of Object.entries(THEMATIC_TRIGGERS)) {
+    if (regex.test(q) && knowledge[slug] && !matched.some(m => m.slug === slug)) {
+      matched.push({ slug, ...knowledge[slug] });
     }
   }
 
   if (matched.length > 0) return matched;
 
-  // No region detected: include ALL guides (they're small enough ~45k tokens total)
+  // No region detected: include ALL guides
   return Object.entries(knowledge).map(([slug, meta]) => ({ slug, ...meta }));
 }
 

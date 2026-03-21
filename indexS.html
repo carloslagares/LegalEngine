@@ -253,6 +253,20 @@
       border-color: rgba(255,255,255,0.2);
       color: rgba(255,255,255,0.7);
     }
+    .hero-search-pill.pill-fade-out {
+      animation: pillFadeOut 0.4s ease forwards;
+    }
+    .hero-search-pill.pill-fade-in {
+      animation: pillFadeIn 0.4s ease forwards;
+    }
+    @keyframes pillFadeOut {
+      0%   { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-6px); }
+    }
+    @keyframes pillFadeIn {
+      0%   { opacity: 0; transform: translateY(6px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
     .hero-search-box {
       display: flex;
       align-items: center;
@@ -1205,11 +1219,11 @@
       <p class="hero-subtitle">We'll walk you through the registration process for your region — step by step, no jargon, no guesswork.</p>
       <!-- AI Search Box -->
       <div class="hero-search-wrap">
-        <div class="hero-search-pills">
-          <span class="hero-search-pill">Regional Regulations</span>
-          <span class="hero-search-pill">Guest Registration & GDPR</span>
-          <span class="hero-search-pill">Identity Verification</span>
-          <span class="hero-search-pill">Rental License</span>
+        <div class="hero-search-pills" id="heroPills">
+          <span class="hero-search-pill" data-slot="0">Regional Regulations</span>
+          <span class="hero-search-pill" data-slot="1">Guest Registration & GDPR</span>
+          <span class="hero-search-pill" data-slot="2">Identity Verification</span>
+          <span class="hero-search-pill" data-slot="3">Rental License</span>
         </div>
         <div class="hero-search-box">
           <div class="hero-search-icon">
@@ -1802,52 +1816,105 @@
   });
 
   // ── Pill question banks (rotate on each click) ──
-  var pillQuestionSets = {
-    'Regional Regulations': [
-      "What regulations apply to short-term rentals in my region?",
-      "What are the maximum rental days allowed per year?",
-      "Are there zoning restrictions for vacation rentals?",
-      "What local taxes do I need to collect from guests?",
-      "Do I need to notify my neighbours before renting?",
-      "Are there noise or occupancy limits I must follow?",
-      "What penalties apply for non-compliant vacation rentals?"
-    ],
-    'Guest Registration & GDPR': [
-      "How do I register guests with the local authorities?",
-      "What guest data must I report to the police?",
-      "How long do I have to submit guest information after check-in?",
-      "What are my GDPR obligations when collecting guest data?",
-      "How long can I retain guest personal information?",
-      "Do I need a privacy policy for my vacation rental?",
-      "Can I share guest data with third-party platforms?"
-    ],
-    'Identity Verification': [
-      "What identity documents must I collect from guests?",
-      "Is remote identity verification accepted in my region?",
-      "Do I need to verify every guest or just the lead booker?",
-      "Can I use self-check-in with automated ID verification?",
-      "What happens if a guest cannot provide valid ID?",
-      "Are biometric checks required for guest verification?",
-      "How should I store scanned identity documents?"
-    ],
-    'Rental License': [
-      "Do I need a tourist license to list my property?",
-      "How do I apply for a vacation rental license?",
-      "How long does the license application process take?",
-      "What documents are required for the license application?",
-      "Does my license need to be renewed periodically?",
-      "Can my license be revoked and under what conditions?",
-      "Do I need to display my license number on listings?"
-    ]
-  };
-  var pillClickIndex = {};
+  // ── All pill categories (more than 4 — they rotate) ──
+  var allPillCategories = [
+    {
+      name: 'Regional Regulations',
+      questions: [
+        "What regulations apply to short-term rentals in my region?",
+        "What are the maximum rental days allowed per year?",
+        "Are there zoning restrictions for vacation rentals?",
+        "What penalties apply for non-compliant vacation rentals?",
+        "Do I need to notify my neighbours before renting?",
+        "Are there noise or occupancy limits I must follow?"
+      ]
+    },
+    {
+      name: 'Guest Registration & GDPR',
+      questions: [
+        "How do I register guests with the local authorities?",
+        "What guest data must I report to the police?",
+        "How long do I have to submit guest information after check-in?",
+        "What are my GDPR obligations when collecting guest data?",
+        "How long can I retain guest personal information?",
+        "Do I need a privacy policy for my vacation rental?"
+      ]
+    },
+    {
+      name: 'Identity Verification',
+      questions: [
+        "What identity documents must I collect from guests?",
+        "Is remote identity verification accepted in my region?",
+        "Do I need to verify every guest or just the lead booker?",
+        "Can I use self-check-in with automated ID verification?",
+        "What happens if a guest cannot provide valid ID?"
+      ]
+    },
+    {
+      name: 'Rental License',
+      questions: [
+        "Do I need a tourist license to list my property?",
+        "How do I apply for a vacation rental license?",
+        "How long does the license application process take?",
+        "What documents are required for the license application?",
+        "Does my license need to be renewed periodically?",
+        "Do I need to display my license number on listings?"
+      ]
+    },
+    {
+      name: 'City Tax',
+      questions: [
+        "What is the tourist tax rate in Barcelona?",
+        "How much city tax do I charge guests in the Balearic Islands?",
+        "Do I need to collect tourist tax in Madrid?",
+        "What is the accommodation tax per night in Rome?",
+        "How does the tourist tax work in Lisbon?",
+        "Are children exempt from tourist tax in Spain?",
+        "What is the maximum number of nights subject to city tax?"
+      ]
+    },
+    {
+      name: 'Electronic Invoicing',
+      questions: [
+        "Do I need to issue electronic invoices for vacation rentals?",
+        "What are the e-invoicing requirements in Spain?",
+        "Is electronic invoicing mandatory for short-term rentals in Italy?",
+        "What software do I need for e-invoicing compliance?",
+        "How do I report VAT on vacation rental income?"
+      ]
+    },
+    {
+      name: 'Payment & Taxes',
+      questions: [
+        "What taxes do I pay on vacation rental income in Spain?",
+        "Do I need to charge VAT or IGIC on my rentals?",
+        "How do I declare rental income as a non-resident?",
+        "What deductions can I claim for my vacation rental?",
+        "Do I need to register as autónomo to rent my property?"
+      ]
+    }
+  ];
 
-  document.querySelectorAll('.hero-search-pill').forEach(function(pill) {
-    var name = pill.textContent.trim();
-    pillClickIndex[name] = 0;
+  // Build a fast lookup for questions by category name
+  var pillQuestionSets = {};
+  allPillCategories.forEach(function(cat) { pillQuestionSets[cat.name] = cat.questions; });
+
+  // ── Pill rotation system ──
+  var PILL_SLOTS = 4;
+  var currentPillIndices = [0, 1, 2, 3]; // which categories are currently visible
+  var pillClickIndex = {};
+  var pillRotationTimer;
+
+  function getPillEls() {
+    return document.querySelectorAll('.hero-search-pill');
+  }
+
+  function bindPillClick(pill) {
     pill.addEventListener('click', function() {
+      var name = pill.textContent.trim();
       var qs = pillQuestionSets[name];
       if (!qs) return;
+      if (!pillClickIndex[name]) pillClickIndex[name] = 0;
       input.value = qs[pillClickIndex[name] % qs.length];
       pillClickIndex[name]++;
       placeholder.style.display = 'none';
@@ -1855,7 +1922,49 @@
       followupEl.innerHTML = '';
       input.focus();
     });
-  });
+  }
+
+  // Bind initial pills
+  getPillEls().forEach(bindPillClick);
+
+  // Pick a random slot and rotate in a new category
+  function rotatePill() {
+    var slotIdx = Math.floor(Math.random() * PILL_SLOTS);
+    var pill = document.querySelector('.hero-search-pill[data-slot="' + slotIdx + '"]');
+    if (!pill) return;
+
+    // Find a category not currently visible
+    var available = [];
+    for (var i = 0; i < allPillCategories.length; i++) {
+      if (currentPillIndices.indexOf(i) === -1) available.push(i);
+    }
+    if (available.length === 0) return;
+
+    var newCatIdx = available[Math.floor(Math.random() * available.length)];
+    var newCat = allPillCategories[newCatIdx];
+
+    // Animate out
+    pill.classList.add('pill-fade-out');
+
+    setTimeout(function() {
+      pill.textContent = newCat.name;
+      pill.classList.remove('pill-fade-out');
+      pill.classList.add('pill-fade-in');
+      currentPillIndices[slotIdx] = newCatIdx;
+
+      // Re-bind click for new category
+      var newPill = pill.cloneNode(true);
+      pill.parentNode.replaceChild(newPill, pill);
+      bindPillClick(newPill);
+
+      setTimeout(function() {
+        newPill.classList.remove('pill-fade-in');
+      }, 400);
+    }, 400);
+  }
+
+  // Rotate one pill every 6 seconds
+  pillRotationTimer = setInterval(rotatePill, 6000);
 
   // ── Region data (loaded from API) ──
   var availableRegions = [];
