@@ -65,5 +65,19 @@
     "aliases": ["city tax", "tourist tax", "impuesto turístico", "tasa turística", "accommodation tax", "taxe de séjour", "kurtaxe", "its", "impuesto turismo sostenible", "tourist levy", "tax rate"],
     "source": "city_tax_knowledge_base.json",
     "type": "thematic"
+  },
+  "tourist-license": {
+    "name": "Tourist License & Registration (Spain)",
+    "file": "tourist-license.md",
+    "aliases": ["licencia turística", "tourist license", "declaración responsable", "registro turístico", "tourism registration", "VUT registration"],
+    "source": "expert-insights",
+    "type": "thematic"
+  },
+  "identity-verification": {
+    "name": "Identity Verification & Guest Registration (Europe)",
+    "file": "identity-verification.md",
+    "aliases": ["identity verification", "verificación de identidad", "guest registration", "registro de huéspedes", "check-in wall", "alloggiati", "ses.hospedajes", "police registration", "registro policial"],
+    "source": "expert-insights",
+    "type": "thematic"
   }
 }
