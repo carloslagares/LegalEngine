@@ -2491,6 +2491,13 @@
 })();
 </script>
 
+<!-- Global helper: detect current site language -->
+<script>
+function getSiteLang() {
+  return document.documentElement.getAttribute('data-lang') || 'en';
+}
+</script>
+
 <!-- AI Search Typewriter + Smart Ask -->
 <script>
 (function() {
@@ -3590,11 +3597,6 @@ if (location.hash === '#blog' || location.hash.startsWith('#article/')) {
   var guideFormView = document.getElementById('guideFormView');
   var guideSuccessView = document.getElementById('guideSuccessView');
   var guideForm = document.getElementById('guideForm');
-
-  // ── Site language detection ──
-  function getSiteLang() {
-    return document.documentElement.getAttribute('data-lang') || 'en';
-  }
 
   // ── Guide content data (bilingual) ──
   var guideData = {
