@@ -1469,9 +1469,53 @@
     .guide-card.hidden { display: none; }
 
     /* ================================================
-       BLOG ARTICLES
+       BLOG OVERLAY (full-page, nav-only)
        ================================================ */
-    .blog-section { background: var(--gray-50); }
+    .blog-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--white);
+      z-index: 9998;
+      overflow-y: auto;
+    }
+    .blog-overlay.active { display: block; }
+    .blog-overlay-nav {
+      position: sticky;
+      top: 0;
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      z-index: 10;
+    }
+    .blog-overlay-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .blog-overlay-back {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--body-text);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .blog-overlay-back:hover { color: var(--blue); }
+    .blog-overlay-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .blog-overlay-content {
+      padding: 24px 0 80px;
+    }
     .blog-list {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -1879,11 +1923,11 @@
           <div class="mega-drop" style="min-width:360px">
             <div class="mega-drop-col">
               <div class="mega-section-title">Learn</div>
-              <a href="#blog">Guides</a>
+              <a href="#" onclick="event.preventDefault();openBlogOverlay()">Guides</a>
             </div>
             <div class="mega-drop-col">
               <div class="mega-section-title">Explore</div>
-              <a href="#blog-articles">Blog</a>
+              <a href="#" onclick="event.preventDefault();openBlogOverlay()">Blog</a>
             </div>
           </div>
         </li>
@@ -1945,8 +1989,8 @@
     <div class="mob-section">
       <div class="mob-section-title" onclick="this.parentElement.classList.toggle('open')">Resources <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="mob-section-items">
-        <a href="#blog">Guides</a>
-        <a href="#blog-articles">Blog</a>
+        <a href="#" onclick="event.preventDefault();openBlogOverlay();toggleMobileNav()">Guides</a>
+        <a href="#" onclick="event.preventDefault();openBlogOverlay();toggleMobileNav()">Blog</a>
       </div>
     </div>
     <div class="mob-direct">
@@ -2125,60 +2169,39 @@
     </div>
   </section>
 
-  <!-- ========== BLOG / RESOURCES ========== -->
-  <section class="guides-section" id="blog">
-    <div class="content">
-      <div class="section-label">
-        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M5 6h6M5 8h4M5 10h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-        Resources
-      </div>
-      <h2 class="section-title">Compliance guides and expert insights</h2>
-      <p class="section-desc">Region-specific registration guides, regulatory updates, and practical advice to keep your vacation rental fully compliant.</p>
-
-      <!-- Filter tabs -->
-      <div class="blog-filters" id="blogFilters">
-        <button class="blog-filter active" data-filter="all">All</button>
-        <button class="blog-filter" data-filter="spain">Spain</button>
-        <button class="blog-filter" data-filter="europe">Europe</button>
-        <button class="blog-filter" data-filter="compliance">Compliance</button>
-      </div>
-
-      <div class="guide-grid" id="blogGrid">
-        <!-- Populated dynamically -->
-      </div>
-
-      <div style="text-align:center;margin-top:24px">
-        <button class="blog-load-more" id="blogLoadMore" style="display:none">Load more guides</button>
+  <!-- ========== BLOG OVERLAY (full-page, accessible via nav only) ========== -->
+  <div class="blog-overlay" id="blogOverlay">
+    <div class="blog-overlay-nav">
+      <div class="blog-overlay-nav-inner">
+        <button class="blog-overlay-back" onclick="closeBlogOverlay()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Back to home
+        </button>
+        <span class="blog-overlay-title">Blog</span>
       </div>
     </div>
-  </section>
+    <div class="blog-overlay-content">
+      <div class="content">
+        <h1 class="section-title" style="margin-top:24px">Vacation rental compliance insights</h1>
+        <p class="section-desc">In-depth articles on vacation rental regulations, electronic invoicing, guest registration, and compliance best practices across Europe.</p>
 
-  <!-- ========== BLOG ARTICLES ========== -->
-  <section class="blog-section" id="blog-articles">
-    <div class="content">
-      <div class="section-label">
-        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2h10a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M5 5h6M5 8h6M5 11h4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
-        Blog
-      </div>
-      <h2 class="section-title">Vacation rental compliance insights</h2>
-      <p class="section-desc">In-depth articles on vacation rental regulations, electronic invoicing, guest registration, and compliance best practices across Europe.</p>
+        <div class="blog-filters" id="articleFilters">
+          <button class="blog-filter active" data-filter="all">All</button>
+          <button class="blog-filter" data-filter="spain">Spain</button>
+          <button class="blog-filter" data-filter="europe">Europe</button>
+          <button class="blog-filter" data-filter="invoicing">E-Invoicing</button>
+        </div>
 
-      <div class="blog-filters" id="articleFilters">
-        <button class="blog-filter active" data-filter="all">All</button>
-        <button class="blog-filter" data-filter="spain">Spain</button>
-        <button class="blog-filter" data-filter="europe">Europe</button>
-        <button class="blog-filter" data-filter="invoicing">E-Invoicing</button>
-      </div>
+        <div class="blog-list" id="articleGrid">
+          <!-- Populated dynamically -->
+        </div>
 
-      <div class="blog-list" id="articleGrid">
-        <!-- Populated dynamically -->
-      </div>
-
-      <div style="text-align:center;margin-top:24px">
-        <button class="blog-load-more" id="articleLoadMore" style="display:none">Load more articles</button>
+        <div style="text-align:center;margin-top:24px">
+          <button class="blog-load-more" id="articleLoadMore" style="display:none">Load more articles</button>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- Blog article overlay (full-screen reader) -->
   <div class="blog-article-overlay" id="blogArticleOverlay">
@@ -2723,186 +2746,22 @@
     })
     .catch(function() { /* silent fail */ });
 
-  // ── Blog posts ──
-  (function() {
-    var blogPosts = [
-      // Spain regional guides
-      { tag: 'Spain', category: 'spain', slug: 'andalucia', emoji: '☀️', title: 'Vacation rental compliance in Andalucia: complete 2026 guide', desc: 'Step-by-step guide to registering your VUT in Andalucia. Junta requirements, SES.HOSPEDAJES, tourist tax, and penalties.' },
-      { tag: 'Spain', category: 'spain', slug: 'cataluna', emoji: '🏔️', title: 'Catalonia vacation rental license (HUTT): requirements and process', desc: 'How to obtain your HUTT license in Barcelona, Costa Brava, and Tarragona. Tourist tax rates and Mossos d\'Esquadra reporting.' },
-      { tag: 'Spain', category: 'spain', slug: 'valencia', emoji: '🍊', title: 'Comunidad Valenciana: VUT registration guide 2026', desc: 'Alicante, Valencia, and Castellon vacation rental requirements. Declaracion responsable, guest registration, and compliance.' },
-      { tag: 'Spain', category: 'spain', slug: 'baleares', emoji: '⛵', title: 'Balearic Islands holiday rental license (ETV): complete guide', desc: 'Mallorca, Ibiza, and Menorca ETV license process. Zone restrictions, tourist tax (ITS), and sustainability requirements.' },
-      { tag: 'Spain', category: 'spain', slug: 'canarias-main', emoji: '🌋', title: 'Canary Islands vacation rental guide: Ley 6/2025 explained', desc: 'Tenerife, Gran Canaria, Lanzarote compliance under the new Ley 6/2025. Registration, guest reporting, and tourist tax.' },
-      { tag: 'Spain', category: 'spain', slug: 'madrid', emoji: '🏛️', title: 'Madrid VUT registration: license suspension and what to do', desc: 'Comunidad de Madrid vacation rental rules. License suspension since April 2024, CIVUT certificate, and compliance steps.' },
-      { tag: 'Spain', category: 'spain', slug: 'galicia', emoji: '🌊', title: 'Galicia vacation rental registration with the Xunta', desc: 'Santiago, Vigo, A Coruna — how to register your VUT with the Xunta de Galicia. Requirements and guest reporting.' },
-      { tag: 'Spain', category: 'spain', slug: 'pais-vasco', emoji: '🏗️', title: 'Basque Country VT registration: Decreto 101/2018 guide', desc: 'Bilbao, San Sebastian, Vitoria — VT declaration, REATE registration, and special restrictions in Donostia.' },
-      { tag: 'Spain', category: 'spain', slug: 'asturias', emoji: '🏞️', title: 'Asturias VUT registration: Decreto 48/2016 guide', desc: 'Oviedo, Gijon, Costa Verde — electronic registration, VUT plaque requirements, and compliance checklist.' },
-      { tag: 'Spain', category: 'spain', slug: 'murcia', emoji: '🌶️', title: 'Murcia vacation rental registration: step-by-step guide', desc: 'Cartagena, Costa Calida — ITREM registration, guest reporting, and vivienda de uso turistico requirements.' },
-      { tag: 'Spain', category: 'spain', slug: 'cantabria', emoji: '🏔️', title: 'Cantabria vacation rental guide: registration and compliance', desc: 'Santander, Picos de Europa — vivienda turistica registration, safety requirements, and tourist obligations.' },
-      { tag: 'Spain', category: 'spain', slug: 'canarias-green', emoji: '🏝️', title: 'La Gomera, El Hierro, La Palma: vacation rental guide', desc: 'Green Canary Islands — easier registration rules, 10-year license validity, and compliance requirements.' },
-      // European country guides
-      { tag: 'Italy', category: 'europe', slug: 'italy', emoji: '🇮🇹', title: 'Italy vacation rental compliance: CIN, Alloggiati Web, and tourist tax', desc: 'Complete guide to Italian short-term rental regulations. CIN national code, police reporting, cedolare secca tax, and safety requirements.' },
-      { tag: 'Portugal', category: 'europe', slug: 'portugal', emoji: '🇵🇹', title: 'Portugal Alojamento Local: license, registration, and Mais Habitacao impact', desc: 'How to register your AL in Portugal. RNAL process, SEF/SIBA guest reporting, tourist tax, and recent moratorium rules.' },
-      { tag: 'France', category: 'europe', slug: 'france', emoji: '🇫🇷', title: 'France meuble de tourisme: registration, taxes, and Loi Le Meur', desc: 'Mairie registration, 120-day limit, taxe de sejour, DPE requirements, and Paris-specific compensation rules.' },
-      { tag: 'Croatia', category: 'europe', slug: 'croatia', emoji: '🇭🇷', title: 'Croatia vacation rental guide: eVisitor, tourist tax, and flat-rate tax', desc: 'How to register as iznajmljivac in Croatia. eVisitor system, categorization, boravisna pristojba, and pausalni porez.' },
-      { tag: 'Greece', category: 'europe', slug: 'greece', emoji: '🇬🇷', title: 'Greece short-term rental registry: AADE, 90-day limit, and myDATA', desc: 'Property registration on AADE platform, day limits, police reporting, tourist tax, and island-specific restrictions.' },
-      { tag: 'Austria', category: 'europe', slug: 'austria', emoji: '🇦🇹', title: 'Austria vacation rental compliance: Feratel, Ortstaxe, and state rules', desc: 'Guest registration via Feratel, tourist tax by Bundesland, Vienna/Salzburg/Tyrol specific regulations, and trade license.' },
-      { tag: 'Czech Republic', category: 'europe', slug: 'czech-republic', emoji: '🇨🇿', title: 'Czech Republic rental guide: UbyPort, trade license, and Prague rules', desc: 'Zivnostensky list requirements, UbyPort police reporting, accommodation fees, and Prague-specific zoning.' },
-      { tag: 'Germany', category: 'europe', slug: 'germany', emoji: '🇩🇪', title: 'Germany short-term rental regulations: permits, Meldeschein, and city rules', desc: 'Zweckentfremdungsverbot, Berlin/Munich/Hamburg permits, guest registration, tourist tax, and fines up to EUR 500,000.' },
-      // Thematic articles
-      { tag: 'Europe', category: 'compliance', slug: null, emoji: '💰', title: 'Tourist tax in Europe: rates, rules, and how to collect it', desc: 'A country-by-country breakdown of tourist tax obligations and how to calculate and collect the right amount per guest.', url: 'https://www.chekin.com/blog/tourist-tax-europe/' },
-      { tag: 'Compliance', category: 'compliance', slug: null, emoji: '🔐', title: 'How to register guests with Spanish police automatically', desc: 'Guest reporting obligations under Spanish law and how to automate the SES, Mossos, and Guardia Civil submissions.', url: 'https://www.chekin.com/blog/guest-registration-spain/' },
-      { tag: 'Spain', category: 'compliance', slug: null, emoji: '📋', title: 'Vacation rental laws in Spain: what you need to know in 2026', desc: 'A complete overview of Spanish vacation rental regulations, from national rules to autonomous community differences.', url: 'https://www.chekin.com/blog/vacation-rental-laws-spain/' }
-    ];
+  // ── Blog overlay open/close ──
+  window.openBlogOverlay = function() {
+    var overlay = document.getElementById('blogOverlay');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    overlay.scrollTop = 0;
+    history.pushState({ blog: true }, '', '#blog');
+    // Render articles on first open (blog-articles.js is loaded by now)
+    if (!window._blogRendered) window._initBlogArticles();
+  };
 
-    var blogGrid = document.getElementById('blogGrid');
-    var loadMoreBtn = document.getElementById('blogLoadMore');
-    var POSTS_PER_PAGE = 9;
-    var currentFilter = 'all';
-    var visibleCount = POSTS_PER_PAGE;
-    var arrowSvg = '<svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-
-    function getFiltered() {
-      if (currentFilter === 'all') return blogPosts;
-      return blogPosts.filter(function(p) { return p.category === currentFilter; });
-    }
-
-    function renderBlog() {
-      var filtered = getFiltered();
-      var html = '';
-      var shown = Math.min(visibleCount, filtered.length);
-      for (var i = 0; i < shown; i++) {
-        var p = filtered[i];
-        var href = p.url ? p.url : '#';
-        var onclick = p.slug ? ' onclick="event.preventDefault();openGuideDownload(\'' + p.slug + '\')"' : '';
-        html += '<a href="' + href + '" class="guide-card"' + onclick + '>' +
-          '<div class="guide-tag">' + p.emoji + ' ' + p.tag + '</div>' +
-          '<h3>' + p.title + '</h3>' +
-          '<p>' + p.desc + '</p>' +
-          '<span class="guide-link">' + (p.slug ? 'Download guide' : 'Read article') + ' ' + arrowSvg + '</span>' +
-          '</a>';
-      }
-      blogGrid.innerHTML = html;
-      loadMoreBtn.style.display = (shown < filtered.length) ? '' : 'none';
-    }
-
-    // Filter buttons
-    document.querySelectorAll('.blog-filter').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('.blog-filter').forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        currentFilter = btn.getAttribute('data-filter');
-        visibleCount = POSTS_PER_PAGE;
-        renderBlog();
-      });
-    });
-
-    // Load more
-    loadMoreBtn.addEventListener('click', function() {
-      visibleCount += POSTS_PER_PAGE;
-      renderBlog();
-    });
-
-    renderBlog();
-  })();
-
-  // ── Blog Articles (narrative, SEO-optimized, no lead capture) ──
-  (function() {
-    var blogArticles = window._blogArticles || [];
-
-    var articleGrid = document.getElementById('articleGrid');
-    var articleLoadMore = document.getElementById('articleLoadMore');
-    var articleOverlay = document.getElementById('blogArticleOverlay');
-    var ARTICLES_PER_PAGE = 9;
-    var articleFilter = 'all';
-    var articleVisible = ARTICLES_PER_PAGE;
-    var arrowSvg = '<svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-
-    function getFilteredArticles() {
-      if (articleFilter === 'all') return blogArticles;
-      return blogArticles.filter(function(a) { return a.category === articleFilter; });
-    }
-
-    function renderArticles() {
-      if (!articleGrid) return;
-      var filtered = getFilteredArticles();
-      var html = '';
-      var shown = Math.min(articleVisible, filtered.length);
-      for (var i = 0; i < shown; i++) {
-        var a = filtered[i];
-        html += '<div class="blog-card" onclick="openBlogArticle(\'' + a.slug + '\')">' +
-          '<div class="blog-card-tag">' + a.tag + '</div>' +
-          '<h3>' + a.title + '</h3>' +
-          '<p>' + a.meta + '</p>' +
-          '<div class="blog-card-meta">' + a.date + ' &middot; ' + a.readTime + '</div>' +
-          '<span class="blog-read-link">Read article ' + arrowSvg + '</span>' +
-          '</div>';
-      }
-      if (filtered.length === 0) {
-        html = '<p style="color:var(--gray-400);text-align:center;grid-column:1/-1">Articles coming soon.</p>';
-      }
-      articleGrid.innerHTML = html;
-      if (articleLoadMore) articleLoadMore.style.display = (shown < filtered.length) ? '' : 'none';
-    }
-
-    // Filter buttons
-    document.querySelectorAll('#articleFilters .blog-filter').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('#articleFilters .blog-filter').forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        articleFilter = btn.getAttribute('data-filter');
-        articleVisible = ARTICLES_PER_PAGE;
-        renderArticles();
-      });
-    });
-
-    if (articleLoadMore) {
-      articleLoadMore.addEventListener('click', function() {
-        articleVisible += ARTICLES_PER_PAGE;
-        renderArticles();
-      });
-    }
-
-    // Open article
-    window.openBlogArticle = function(slug) {
-      var article = blogArticles.find(function(a) { return a.slug === slug; });
-      if (!article) return;
-      document.getElementById('blogArticleTag').textContent = article.tag;
-      document.getElementById('blogArticleTitle').textContent = article.title;
-      document.getElementById('blogArticleMeta').textContent = article.date + ' · ' + article.readTime;
-      document.getElementById('blogArticleBody').innerHTML = article.body;
-      articleOverlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
-      articleOverlay.scrollTop = 0;
-      history.pushState({ blogArticle: slug }, '', '#article/' + slug);
-    };
-
-    window.closeBlogArticle = function() {
-      articleOverlay.classList.remove('active');
-      document.body.style.overflow = '';
-      if (location.hash.startsWith('#article/')) history.back();
-    };
-
-    // Handle back button
-    window.addEventListener('popstate', function(e) {
-      if (articleOverlay.classList.contains('active')) {
-        articleOverlay.classList.remove('active');
-        document.body.style.overflow = '';
-      }
-    });
-
-    // ESC to close
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && articleOverlay.classList.contains('active')) closeBlogArticle();
-    });
-
-    // Check if URL has article hash on load
-    if (location.hash.startsWith('#article/')) {
-      var slug = location.hash.replace('#article/', '');
-      setTimeout(function() { openBlogArticle(slug); }, 100);
-    }
-
-    renderArticles();
-  })();
+  window.closeBlogOverlay = function() {
+    document.getElementById('blogOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+    if (location.hash === '#blog') history.back();
+  };
 
   // ── Detect region slug from question text ──
   function detectRegionSlug(text) {
@@ -3435,6 +3294,139 @@
 <!-- jsPDF for guide PDF generation (direct drawing, no html2canvas) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="/blog-articles.js"></script>
+<script>
+// ── Blog Articles init (runs after blog-articles.js is loaded) ──
+window._initBlogArticles = function() {
+  var blogArticles = window._blogArticles || [];
+  if (blogArticles.length === 0) return;
+  window._blogRendered = true;
+
+  var articleGrid = document.getElementById('articleGrid');
+  var articleLoadMore = document.getElementById('articleLoadMore');
+  var articleOverlay = document.getElementById('blogArticleOverlay');
+  var blogOverlay = document.getElementById('blogOverlay');
+  var ARTICLES_PER_PAGE = 9;
+  var articleFilter = 'all';
+  var articleVisible = ARTICLES_PER_PAGE;
+  var arrowSvg = '<svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  function getFilteredArticles() {
+    if (articleFilter === 'all') return blogArticles;
+    return blogArticles.filter(function(a) { return a.category === articleFilter; });
+  }
+
+  function renderArticles() {
+    if (!articleGrid) return;
+    var filtered = getFilteredArticles();
+    var html = '';
+    var shown = Math.min(articleVisible, filtered.length);
+    for (var i = 0; i < shown; i++) {
+      var a = filtered[i];
+      html += '<div class="blog-card" onclick="openBlogArticle(\'' + a.slug + '\')">' +
+        '<div class="blog-card-tag">' + a.tag + '</div>' +
+        '<h3>' + a.title + '</h3>' +
+        '<p>' + a.meta + '</p>' +
+        '<div class="blog-card-meta">' + a.date + ' &middot; ' + a.readTime + '</div>' +
+        '<span class="blog-read-link">Read article ' + arrowSvg + '</span>' +
+        '</div>';
+    }
+    articleGrid.innerHTML = html;
+    if (articleLoadMore) articleLoadMore.style.display = (shown < filtered.length) ? '' : 'none';
+  }
+
+  // Filter buttons
+  document.querySelectorAll('#articleFilters .blog-filter').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('#articleFilters .blog-filter').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      articleFilter = btn.getAttribute('data-filter');
+      articleVisible = ARTICLES_PER_PAGE;
+      renderArticles();
+    });
+  });
+
+  if (articleLoadMore) {
+    articleLoadMore.addEventListener('click', function() {
+      articleVisible += ARTICLES_PER_PAGE;
+      renderArticles();
+    });
+  }
+
+  // Open article
+  window.openBlogArticle = function(slug) {
+    var article = blogArticles.find(function(a) { return a.slug === slug; });
+    if (!article) return;
+    document.getElementById('blogArticleTag').textContent = article.tag;
+    document.getElementById('blogArticleTitle').textContent = article.title;
+    document.getElementById('blogArticleMeta').textContent = article.date + ' · ' + article.readTime;
+    document.getElementById('blogArticleBody').innerHTML = article.body;
+    articleOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    articleOverlay.scrollTop = 0;
+    history.pushState({ blogArticle: slug }, '', '#article/' + slug);
+  };
+
+  window.closeBlogArticle = function() {
+    articleOverlay.classList.remove('active');
+    // Return to blog overlay, not home
+    blogOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    if (location.hash.startsWith('#article/')) {
+      history.replaceState({ blog: true }, '', '#blog');
+    }
+  };
+
+  // Handle back button
+  window.addEventListener('popstate', function() {
+    if (articleOverlay.classList.contains('active')) {
+      articleOverlay.classList.remove('active');
+      blogOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    } else if (blogOverlay.classList.contains('active')) {
+      blogOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  });
+
+  // ESC to close
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      if (articleOverlay.classList.contains('active')) {
+        closeBlogArticle();
+      } else if (blogOverlay.classList.contains('active')) {
+        closeBlogOverlay();
+      }
+    }
+  });
+
+  renderArticles();
+
+  // Check if URL has article or blog hash on load
+  if (location.hash.startsWith('#article/')) {
+    var slug = location.hash.replace('#article/', '');
+    blogOverlay.classList.add('active');
+    openBlogArticle(slug);
+  } else if (location.hash === '#blog') {
+    blogOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+};
+
+// Auto-init if blog-articles.js already loaded
+if (window._blogArticles && window._blogArticles.length > 0) {
+  window._initBlogArticles();
+}
+// Also handle hash on page load
+if (location.hash === '#blog' || location.hash.startsWith('#article/')) {
+  document.addEventListener('DOMContentLoaded', function() {
+    window._initBlogArticles();
+    if (location.hash === '#blog') {
+      document.getElementById('blogOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  });
+}
+</script>
 
 <!-- Guide Download Modal (lead capture) -->
 <style>
