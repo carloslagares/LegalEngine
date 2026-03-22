@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LegalEngine — Compliance Assistant User Guide</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      .page-break { page-break-before: always; }
+      body { font-size: 11px; }
+      .cover-section { min-height: 100vh; }
+    }
+    code { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-white text-gray-900 font-sans leading-relaxed">
+
+  <!-- Print / Save as PDF Button -->
+  <div class="no-print fixed top-4 right-4 z-50">
+    <button onclick="window.print()" class="px-5 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-500 transition-colors duration-200 cursor-pointer shadow-lg">
+      Save as PDF
+    </button>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- COVER PAGE -->
+  <!-- ============================================================ -->
+  <div class="cover-section min-h-screen bg-gradient-to-br from-[#0f0a2e] via-[#1a1145] to-[#2d1b69] flex items-center px-8 py-16">
+    <div class="max-w-3xl ml-8 md:ml-16">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 text-indigo-300 text-xs font-semibold tracking-widest uppercase rounded-full mb-8 border border-white/10">
+        Internal Use &mdash; Product & Compliance Team
+      </div>
+      <h1 class="text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-tight">
+        AI-Powered<br>
+        <span class="bg-indigo-500/30 px-2 rounded">Compliance</span><br>
+        <span class="text-white">Assistant</span>
+      </h1>
+      <div class="w-12 h-1 bg-indigo-400 rounded mt-6 mb-8"></div>
+      <p class="text-lg text-indigo-200/80 max-w-xl leading-relaxed">
+        A complete guide to the LegalEngine web application &mdash; an AI assistant that answers vacation rental compliance questions using real legal guides as its knowledge base.
+      </p>
+      <div class="mt-10 space-y-2 text-sm text-indigo-300/60">
+        <p><span class="font-semibold text-indigo-300/80">Version:</span> 1.0 &mdash; March 2026</p>
+        <p><span class="font-semibold text-indigo-300/80">For:</span> Product, Compliance & Customer Success</p>
+        <p><span class="font-semibold text-indigo-300/80">URL:</span> legalengine-production.up.railway.app</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-4xl mx-auto px-6 py-16">
+
+    <!-- TABLE OF CONTENTS -->
+    <nav class="mb-16">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Contents</h2>
+      <ol class="space-y-2.5 text-sm">
+        <li class="flex gap-3"><span class="text-indigo-500 font-mono font-semibold w-8">01</span><a href="#what" class="text-gray-700 hover:text-indigo-600">What is LegalEngine?</a></li>
+        <li class="flex gap-3"><span class="text-indigo-500 font-mono font-semibold w-8">02</span><a href="#architecture" class="text-gray-700 hover:text-indigo-600">Architecture &amp; tech stack</a></li>
+        <li class="flex gap-3"><span class="text-indigo-500 font-mono font-semibold w-8">03</span><a href="#knowledge" class="text-gray-700 hover:text-indigo-600">Knowledge base &mdash; what it knows</a></li>
+        <li class="flex gap-3"><span class="text-indigo-500 font-mono font-semibold w-8">04</span><a href="#how" class="text-gray-700 hover:text-indigo-600">How to use it</a></li>
+        <li class="flex gap-3"><span class="text-indigo-500 font-mono font-semibold w-8">05</span><a href="#examples" class="text-gray-700 hover:text-indigo-600">Example questions &amp; answers</a></li>
+        <li class="flex gap-3"><span class="text-indigo-500 font-mono font-semibold w-8">06</span><a href="#expand" class="text-gray-700 hover:text-indigo-600">How to expand the knowledge base</a></li>
+        <li class="flex gap-3"><span class="text-indigo-500 font-mono font-semibold w-8">07</span><a href="#roadmap" class="text-gray-700 hover:text-indigo-600">Roadmap &amp; next steps</a></li>
+      </ol>
+    </nav>
+
+    <hr class="border-gray-200 mb-16">
+
+    <!-- ============================================================ -->
+    <!-- SECTION 1: WHAT IS LEGALENGINE -->
+    <!-- ============================================================ -->
+    <section id="what" class="mb-20">
+      <div class="flex items-start gap-4 mb-2">
+        <span class="flex-shrink-0 w-10 h-10 rounded-lg bg-indigo-600 text-white font-bold text-sm flex items-center justify-center">1</span>
+        <div>
+          <h2 class="text-3xl font-bold text-gray-900">What is LegalEngine?</h2>
+          <p class="text-gray-500 mt-1">AI compliance assistant, on demand</p>
+        </div>
+      </div>
+      <hr class="border-gray-200 my-6">
+
+      <p class="text-gray-700 leading-relaxed mb-8">
+        <strong>LegalEngine</strong> is a web application that answers questions about vacation rental regulations across Spain and Europe. It works like having a compliance expert on call: the user types a question, the system identifies the relevant region and topic, retrieves the appropriate legal guide, and uses Claude AI to generate a precise, sourced answer &mdash; streamed in real time.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div class="border border-gray-200 rounded-xl p-5">
+          <div class="text-2xl mb-2">&#x1F50D;</div>
+          <h3 class="font-bold text-gray-900 mb-1">Smart region detection</h3>
+          <p class="text-sm text-gray-600">Automatically identifies which Spanish region the user is asking about and loads the right guide as context.</p>
+        </div>
+        <div class="border border-gray-200 rounded-xl p-5">
+          <div class="text-2xl mb-2">&#x26A1;</div>
+          <h3 class="font-bold text-gray-900 mb-1">Real-time streaming</h3>
+          <p class="text-sm text-gray-600">Answers appear token by token using Server-Sent Events (SSE), providing instant feedback while Claude generates the response.</p>
+        </div>
+        <div class="border border-gray-200 rounded-xl p-5">
+          <div class="text-2xl mb-2">&#x1F4DA;</div>
+          <h3 class="font-bold text-gray-900 mb-1">Grounded in real guides</h3>
+          <p class="text-sm text-gray-600">Every answer is based on actual legal guides written by lawyers. The AI never invents requirements &mdash; it only uses what is in the knowledge base.</p>
+        </div>
+        <div class="border border-gray-200 rounded-xl p-5">
+          <div class="text-2xl mb-2">&#x1F504;</div>
+          <h3 class="font-bold text-gray-900 mb-1">Expandable knowledge</h3>
+          <p class="text-sm text-gray-600">Adding a new region or topic is as simple as dropping a Markdown file into the <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">knowledge/</code> folder.</p>
+        </div>
+      </div>
+
+      <!-- Callout -->
+      <div class="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-4">
+        <p class="text-sm text-amber-900">
+          <strong>Important:</strong> LegalEngine provides operational intelligence based on curated legal guides. It is not a substitute for legal advice. Users should always verify critical information with a licensed lawyer.
+        </p>
+      </div>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 2: ARCHITECTURE -->
+    <!-- ============================================================ -->
+    <section id="architecture" class="mb-20">
+      <div class="flex items-start gap-4 mb-2">
+        <span class="flex-shrink-0 w-10 h-10 rounded-lg bg-indigo-600 text-white font-bold text-sm flex items-center justify-center">2</span>
+        <div>
+          <h2 class="text-3xl font-bold text-gray-900">Architecture &amp; tech stack</h2>
+          <p class="text-gray-500 mt-1">How it works under the hood</p>
+        </div>
+      </div>
+      <hr class="border-gray-200 my-6">
+
+      <!-- Architecture diagram as code block -->
+      <div class="bg-[#1a1e2e] rounded-xl p-6 mb-8 overflow-x-auto">
+        <div class="flex gap-2 mb-4">
+          <span class="w-3 h-3 rounded-full bg-red-400"></span>
+          <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
+          <span class="w-3 h-3 rounded-full bg-green-400"></span>
+        </div>
+        <pre class="text-sm text-gray-300 font-mono leading-relaxed"><code>User question
+     |
+     v
++------------------+     +-----------------------+
+|   <span class="text-indigo-400">index.html</span>      |     |  <span class="text-indigo-400">knowledge/</span>            |
+|   (Frontend)     |     |  _index.json           |
+|   fetch + SSE    |     |  andalucia.md           |
++--------+---------+     |  cataluna.md            |
+         |               |  baleares.md   ...      |
+    POST /api/ask        |  <span class="text-amber-400">city-tax.md</span>            |
+         |               +-----------+-------------+
+         v                           |
++------------------+                 |
+|   <span class="text-indigo-400">server.js</span>       | &lt;-- loads at startup
+|   (Express)      |
+|                  |---&gt; resolveGuides(question)
+|                  |---&gt; Claude API (streaming)
++------------------+
+         |
+    SSE chunks
+         |
+         v
+   Answer rendered
+   in real time</code></pre>
+      </div>
+
+      <h3 class="text-xl font-bold text-gray-900 mb-4">Tech stack</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-indigo-600 text-white">
+              <th class="text-left px-4 py-2.5 font-semibold rounded-tl-lg">Layer</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Technology</th>
+              <th class="text-left px-4 py-2.5 font-semibold rounded-tr-lg">Purpose</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr><td class="px-4 py-3 font-medium">Frontend</td><td class="px-4 py-3">HTML5 + CSS3 + Vanilla JS</td><td class="px-4 py-3">Single-page UI with SSE streaming</td></tr>
+            <tr class="bg-gray-50"><td class="px-4 py-3 font-medium">Backend</td><td class="px-4 py-3">Node.js + Express</td><td class="px-4 py-3">API server, static file hosting</td></tr>
+            <tr><td class="px-4 py-3 font-medium">AI Engine</td><td class="px-4 py-3">Claude API (Anthropic SDK)</td><td class="px-4 py-3">Generates answers from guide context</td></tr>
+            <tr class="bg-gray-50"><td class="px-4 py-3 font-medium">Knowledge Base</td><td class="px-4 py-3">Markdown files + JSON manifest</td><td class="px-4 py-3">Structured legal content per region</td></tr>
+            <tr><td class="px-4 py-3 font-medium">Hosting</td><td class="px-4 py-3">Railway</td><td class="px-4 py-3">Auto-deploy from GitHub on push</td></tr>
+            <tr class="bg-gray-50"><td class="px-4 py-3 font-medium">Source Control</td><td class="px-4 py-3">GitHub</td><td class="px-4 py-3">Version control + CI/CD trigger</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="text-xl font-bold text-gray-900 mt-8 mb-4">API endpoints</h3>
+      <div class="space-y-3">
+        <div class="bg-[#1a1e2e] rounded-xl p-4">
+          <p class="text-xs text-indigo-400 font-mono font-semibold uppercase tracking-wider mb-2">POST</p>
+          <code class="text-sm text-gray-300 font-mono">/api/ask</code>
+          <p class="text-xs text-gray-500 mt-2">Body: <code class="text-amber-400">{ "question": "...", "region": "madrid", "stream": true }</code></p>
+          <p class="text-xs text-gray-500 mt-1">Returns SSE stream of answer chunks or JSON response</p>
+        </div>
+        <div class="bg-[#1a1e2e] rounded-xl p-4">
+          <p class="text-xs text-green-400 font-mono font-semibold uppercase tracking-wider mb-2">GET</p>
+          <code class="text-sm text-gray-300 font-mono">/api/regions</code>
+          <p class="text-xs text-gray-500 mt-2">Returns array of available regions with slug and display name</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 3: KNOWLEDGE BASE -->
+    <!-- ============================================================ -->
+    <section id="knowledge" class="mb-20">
+      <div class="flex items-start gap-4 mb-2">
+        <span class="flex-shrink-0 w-10 h-10 rounded-lg bg-indigo-600 text-white font-bold text-sm flex items-center justify-center">3</span>
+        <div>
+          <h2 class="text-3xl font-bold text-gray-900">Knowledge base</h2>
+          <p class="text-gray-500 mt-1">What the assistant knows today</p>
+        </div>
+      </div>
+      <hr class="border-gray-200 my-6">
+
+      <p class="text-gray-700 leading-relaxed mb-6">
+        The knowledge base currently contains <strong>11 curated sources</strong>: 10 regional compliance guides for Spanish autonomous communities and 1 thematic guide on European tourist taxes.
+      </p>
+
+      <h3 class="text-xl font-bold text-gray-900 mb-4">Regional guides (Spain)</h3>
+      <p class="text-sm text-gray-600 mb-4">Each guide covers the full VUT registration process: urbanismo checks, habitability requirements, documentation, administrative procedures, guest registration, and ongoing obligations.</p>
+
+      <div class="overflow-x-auto mb-8">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-indigo-600 text-white">
+              <th class="text-left px-4 py-2.5 font-semibold rounded-tl-lg">Region</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Slug</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Detects on</th>
+              <th class="text-left px-4 py-2.5 font-semibold rounded-tr-lg">Topics covered</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr><td class="px-4 py-2.5 font-medium">Andalucia</td><td class="px-4 py-2.5"><code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">andalucia</code></td><td class="px-4 py-2.5 text-xs text-gray-500">andalusia, malaga, sevilla, granada...</td><td class="px-4 py-2.5 text-xs">Declaracion responsable, 14m&sup2;/plaza, SES.HOSPEDAJES</td></tr>
+            <tr class="bg-gray-50"><td class="px-4 py-2.5 font-medium">Cataluna</td><td class="px-4 py-2.5"><code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">cataluna</code></td><td class="px-4 py-2.5 text-xs text-gray-500">catalonia, barcelona, girona...</td><td class="px-4 py-2.5 text-xs">PEUAT, cedula habitabilidad, RTC, Mossos</td></tr>
+            <tr><td class="px-4 py-2.5 font-medium">C. Valenciana</td><td class="px-4 py-2.5"><code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">valencia</code></td><td class="px-4 py-2.5 text-xs text-gray-500">valencia, alicante, benidorm...</td><td class="px-4 py-2.5 text-xs">Registration, compatible use, guest reporting</td></tr>
+            <tr class="bg-gray-50"><td class="px-4 py-2.5 font-medium">Islas Baleares</td><td class="px-4 py-2.5"><code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">baleares</code></td><td class="px-4 py-2.5 text-xs text-gray-500">balearic, mallorca, ibiza, menorca...</td><td class="px-4 py-2.5 text-xs">ETV license, ITS tax, DRIAT, NRUA</td></tr>
+            <tr><td class="px-4 py-2.5 font-medium">Canarias (Main)</td><td class="px-4 py-2.5"><code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">canarias-main</code></td><td class="px-4 py-2.5 text-xs text-gray-500">tenerife, gran canaria, lanzarote...</td><td class="px-4 py-2.5 text-xs">Ley 6/2025, cedula urbanistica, IGIC, Cabildo</td></tr>
+            <tr class="bg-gray-50"><td class="px-4 py-2.5 font-medium">Canarias (Green)</td><td class="px-4 py-2.5"><code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">canarias-green</code></td><td class="px-4 py-2.5 text-xs text-gray-500">gomera, hierro, la palma</td><td class="px-4 py-2.5 text-xs">Simplified rules for smaller islands</td></tr>
+            <tr><td class="px-4 py-2.5 font-medium">Madrid</td><td class="px-4 py-2.5"><code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">madrid</code></td><td class="px-4 py-2.5 text-xs text-gray-500">madrid</td><td class="px-4 py-2.5 text-xs">Vivienda uso turistico, 90-day limit, community rules</td></tr>
+            <tr class="bg-gray-50"><td class="px-4 py-2.5 font-medium">Galicia</td><td class="px-4 py-2.5"><code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">galicia</code></td><td class="px-4 py-2.5 text-xs text-gray-500">galicia, vigo, coruña, santiago...</td><td class="px-4 py-2.5 text-xs">Xunta registration, habitability, guest reporting</td></tr>
+            <tr><td class="px-4 py-2.5 font-medium">Cantabria</td><td class="px-4 py-2.5"><code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">cantabria</code></td><td class="px-4 py-2.5 text-xs text-gray-500">cantabria, santander</td><td class="px-4 py-2.5 text-xs">Vivienda turistica, technical requirements</td></tr>
+            <tr class="bg-gray-50"><td class="px-4 py-2.5 font-medium">Murcia</td><td class="px-4 py-2.5"><code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">murcia</code></td><td class="px-4 py-2.5 text-xs text-gray-500">murcia, cartagena</td><td class="px-4 py-2.5 text-xs">Regional license, Costa Calida regulations</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="text-xl font-bold text-gray-900 mb-4">Thematic guides</h3>
+
+      <div class="overflow-x-auto mb-6">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-indigo-600 text-white">
+              <th class="text-left px-4 py-2.5 font-semibold rounded-tl-lg">Topic</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Slug</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Scope</th>
+              <th class="text-left px-4 py-2.5 font-semibold rounded-tr-lg">Key data</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr>
+              <td class="px-4 py-3 font-medium">City Tax / Tourist Tax</td>
+              <td class="px-4 py-3"><code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">city-tax</code></td>
+              <td class="px-4 py-3 text-xs text-gray-500">41 countries, 1,314 cities</td>
+              <td class="px-4 py-3 text-xs">Rates per person/night, exemptions, calculation rules, tiers by accommodation type</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="bg-green-50 border-l-4 border-green-500 rounded-r-lg p-4">
+        <p class="text-sm text-green-900">
+          <strong>Smart context loading:</strong> When a user asks about "tourist tax in Baleares", the system loads <em>both</em> the Baleares regional guide and the City Tax thematic guide, giving Claude the most complete context to answer.
+        </p>
+      </div>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 4: HOW TO USE IT -->
+    <!-- ============================================================ -->
+    <section id="how" class="mb-20">
+      <div class="flex items-start gap-4 mb-2">
+        <span class="flex-shrink-0 w-10 h-10 rounded-lg bg-indigo-600 text-white font-bold text-sm flex items-center justify-center">4</span>
+        <div>
+          <h2 class="text-3xl font-bold text-gray-900">How to use it</h2>
+          <p class="text-gray-500 mt-1">Three ways to interact</p>
+        </div>
+      </div>
+      <hr class="border-gray-200 my-6">
+
+      <h3 class="text-lg font-bold text-gray-900 mb-3">Method 1 &mdash; Type a question directly</h3>
+      <p class="text-gray-700 mb-4">Type any compliance question in the search box. If the question mentions a region, the assistant answers immediately.</p>
+
+      <div class="bg-[#1a1e2e] rounded-xl p-5 mb-8">
+        <p class="text-xs text-indigo-400 font-mono font-semibold uppercase tracking-wider mb-3">Example questions</p>
+        <div class="space-y-2 text-sm text-gray-300 font-mono">
+          <p>"What steps do I need to register a VUT in Madrid?"</p>
+          <p>"How many square meters per guest does Andalucia require?"</p>
+          <p>"Do I need to report guests to the police in Barcelona?"</p>
+          <p>"What is the tourist tax rate in the Balearic Islands?"</p>
+        </div>
+      </div>
+
+      <h3 class="text-lg font-bold text-gray-900 mb-3">Method 2 &mdash; Click a category pill</h3>
+      <p class="text-gray-700 mb-4">The pills above the search box rotate between <strong>7 categories</strong>. Clicking one fills the search box with a relevant sample question.</p>
+
+      <div class="flex flex-wrap gap-2 mb-8">
+        <span class="px-3 py-1.5 bg-indigo-50 text-indigo-700 text-xs font-medium rounded-full border border-indigo-100">Regional Regulations</span>
+        <span class="px-3 py-1.5 bg-indigo-50 text-indigo-700 text-xs font-medium rounded-full border border-indigo-100">Guest Registration & GDPR</span>
+        <span class="px-3 py-1.5 bg-indigo-50 text-indigo-700 text-xs font-medium rounded-full border border-indigo-100">Identity Verification</span>
+        <span class="px-3 py-1.5 bg-indigo-50 text-indigo-700 text-xs font-medium rounded-full border border-indigo-100">Rental License</span>
+        <span class="px-3 py-1.5 bg-amber-50 text-amber-700 text-xs font-medium rounded-full border border-amber-100">City Tax</span>
+        <span class="px-3 py-1.5 bg-amber-50 text-amber-700 text-xs font-medium rounded-full border border-amber-100">Electronic Invoicing</span>
+        <span class="px-3 py-1.5 bg-amber-50 text-amber-700 text-xs font-medium rounded-full border border-amber-100">Payment & Taxes</span>
+      </div>
+      <p class="text-xs text-gray-500 mb-8">Categories in <span class="text-amber-600 font-medium">amber</span> are newly added and rotate in every 6 seconds with a subtle fade animation.</p>
+
+      <h3 class="text-lg font-bold text-gray-900 mb-3">Method 3 &mdash; No region? The assistant asks</h3>
+      <p class="text-gray-700 mb-4">If your question doesn't mention a specific region, a region picker appears with all available communities. Select one and the answer is generated with that guide as context.</p>
+
+      <div class="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-4">
+        <p class="text-sm text-amber-900">
+          <strong>Tip:</strong> If no region is selected and none is detected, the assistant sends <em>all</em> guides as context. This works well for comparative questions like "Which region has the fastest registration process?"
+        </p>
+      </div>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5: EXAMPLE QUESTIONS -->
+    <!-- ============================================================ -->
+    <section id="examples" class="mb-20">
+      <div class="flex items-start gap-4 mb-2">
+        <span class="flex-shrink-0 w-10 h-10 rounded-lg bg-indigo-600 text-white font-bold text-sm flex items-center justify-center">5</span>
+        <div>
+          <h2 class="text-3xl font-bold text-gray-900">Example questions</h2>
+          <p class="text-gray-500 mt-1">What you can ask, by category</p>
+        </div>
+      </div>
+      <hr class="border-gray-200 my-6">
+
+      <!-- Regional -->
+      <h3 class="text-lg font-bold text-gray-900 mb-3">Regional compliance</h3>
+      <div class="bg-[#1a1e2e] rounded-xl p-5 mb-6">
+        <div class="space-y-2 text-sm text-gray-300 font-mono">
+          <p>"What are the steps to register a vacation rental in Andalucia?"</p>
+          <p>"Does Catalonia allow renting individual rooms as VUT?"</p>
+          <p>"What is the minimum property size for a tourist license in Madrid?"</p>
+          <p>"How long does the Canary Islands registration process take?"</p>
+          <p>"What documents do I need for the Declaracion Responsable in Galicia?"</p>
+          <p>"Can my license be revoked in the Balearic Islands?"</p>
+          <p>"What are the air conditioning requirements in Andalucia?"</p>
+        </div>
+      </div>
+
+      <!-- City Tax -->
+      <h3 class="text-lg font-bold text-gray-900 mb-3">City tax / Tourist tax</h3>
+      <div class="bg-[#1a1e2e] rounded-xl p-5 mb-6">
+        <div class="space-y-2 text-sm text-gray-300 font-mono">
+          <p>"What is the tourist tax rate in the Balearic Islands?"</p>
+          <p>"How much city tax should I charge in Barcelona?"</p>
+          <p>"What is the accommodation tax per night in Rome?"</p>
+          <p>"Are children exempt from tourist tax in Spain?"</p>
+          <p>"How does the tourist tax work in Lisbon?"</p>
+          <p>"What is the maximum number of nights subject to city tax?"</p>
+        </div>
+      </div>
+
+      <!-- Guest Registration -->
+      <h3 class="text-lg font-bold text-gray-900 mb-3">Guest registration & identity</h3>
+      <div class="bg-[#1a1e2e] rounded-xl p-5 mb-6">
+        <div class="space-y-2 text-sm text-gray-300 font-mono">
+          <p>"How do I register guests with SES.HOSPEDAJES?"</p>
+          <p>"What guest data must I report to the police in Catalonia?"</p>
+          <p>"Can I use automated ID verification for check-in?"</p>
+          <p>"What are my GDPR obligations when collecting guest data?"</p>
+          <p>"Do I need to verify every guest or just the lead booker?"</p>
+        </div>
+      </div>
+
+      <!-- Licensing -->
+      <h3 class="text-lg font-bold text-gray-900 mb-3">Licensing & renewals</h3>
+      <div class="bg-[#1a1e2e] rounded-xl p-5 mb-6">
+        <div class="space-y-2 text-sm text-gray-300 font-mono">
+          <p>"Does the Canary Islands license need to be renewed?"</p>
+          <p>"How long is a Balearic Islands ETV license valid?"</p>
+          <p>"Do I need to display my license number on Airbnb listings?"</p>
+          <p>"What is the NRUA and when is it required?"</p>
+        </div>
+      </div>
+
+      <!-- Taxes -->
+      <h3 class="text-lg font-bold text-gray-900 mb-3">Taxes & invoicing</h3>
+      <div class="bg-[#1a1e2e] rounded-xl p-5 mb-8">
+        <div class="space-y-2 text-sm text-gray-300 font-mono">
+          <p>"Do I need to charge IGIC on vacation rentals in the Canary Islands?"</p>
+          <p>"What taxes do I pay on rental income in Spain?"</p>
+          <p>"Do I need to register as autonomo to rent my property?"</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 6: HOW TO EXPAND -->
+    <!-- ============================================================ -->
+    <section id="expand" class="mb-20">
+      <div class="flex items-start gap-4 mb-2">
+        <span class="flex-shrink-0 w-10 h-10 rounded-lg bg-indigo-600 text-white font-bold text-sm flex items-center justify-center">6</span>
+        <div>
+          <h2 class="text-3xl font-bold text-gray-900">How to expand the knowledge base</h2>
+          <p class="text-gray-500 mt-1">Adding regions and topics</p>
+        </div>
+      </div>
+      <hr class="border-gray-200 my-6">
+
+      <h3 class="text-lg font-bold text-gray-900 mb-3">Option A &mdash; Add a new Spanish region</h3>
+      <div class="space-y-3 mb-8">
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 font-bold text-xs flex items-center justify-center mt-0.5">1</span>
+          <p class="text-gray-700 text-sm">Drop the new PDF guide into <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">Guias/</code></p>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 font-bold text-xs flex items-center justify-center mt-0.5">2</span>
+          <p class="text-gray-700 text-sm">Add an entry to <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">FILENAME_MAP</code> in <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">scripts/extract-guides.js</code> with slug, name, and aliases</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 font-bold text-xs flex items-center justify-center mt-0.5">3</span>
+          <p class="text-gray-700 text-sm">Run <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">npm run extract</code> to generate the Markdown and update <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">_index.json</code></p>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 font-bold text-xs flex items-center justify-center mt-0.5">4</span>
+          <p class="text-gray-700 text-sm">Commit and push &mdash; Railway auto-deploys in ~60 seconds</p>
+        </div>
+      </div>
+
+      <h3 class="text-lg font-bold text-gray-900 mb-3">Option B &mdash; Add a new thematic guide</h3>
+      <div class="space-y-3 mb-8">
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-amber-100 text-amber-600 font-bold text-xs flex items-center justify-center mt-0.5">1</span>
+          <p class="text-gray-700 text-sm">Create a <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">.md</code> file in <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">knowledge/</code> with structured content</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-amber-100 text-amber-600 font-bold text-xs flex items-center justify-center mt-0.5">2</span>
+          <p class="text-gray-700 text-sm">Add its entry to <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">knowledge/_index.json</code> with <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">"type": "thematic"</code> and relevant aliases</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-amber-100 text-amber-600 font-bold text-xs flex items-center justify-center mt-0.5">3</span>
+          <p class="text-gray-700 text-sm">Add a regex trigger in <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">THEMATIC_TRIGGERS</code> in <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">server.js</code> for auto-detection</p>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 w-6 h-6 rounded-full bg-amber-100 text-amber-600 font-bold text-xs flex items-center justify-center mt-0.5">4</span>
+          <p class="text-gray-700 text-sm">Optionally add a new pill category in <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">allPillCategories</code> in <code class="text-xs bg-gray-100 px-1.5 py-0.5 rounded">index.html</code></p>
+        </div>
+      </div>
+
+      <h3 class="text-lg font-bold text-gray-900 mb-4">Planned expansions</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-indigo-600 text-white">
+              <th class="text-left px-4 py-2.5 font-semibold rounded-tl-lg">Topic</th>
+              <th class="text-left px-4 py-2.5 font-semibold">Type</th>
+              <th class="text-left px-4 py-2.5 font-semibold rounded-tr-lg">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <tr><td class="px-4 py-2.5">Pais Vasco, Aragon, Extremadura, Asturias</td><td class="px-4 py-2.5">Regional</td><td class="px-4 py-2.5"><span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">Planned</span></td></tr>
+            <tr class="bg-gray-50"><td class="px-4 py-2.5">Italy (Rome, Milan, Florence)</td><td class="px-4 py-2.5">Regional</td><td class="px-4 py-2.5"><span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">Planned</span></td></tr>
+            <tr><td class="px-4 py-2.5">Portugal (Lisbon, Algarve, Porto)</td><td class="px-4 py-2.5">Regional</td><td class="px-4 py-2.5"><span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">Planned</span></td></tr>
+            <tr class="bg-gray-50"><td class="px-4 py-2.5">France (Paris, Nice, Provence)</td><td class="px-4 py-2.5">Regional</td><td class="px-4 py-2.5"><span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">Planned</span></td></tr>
+            <tr><td class="px-4 py-2.5">Electronic invoicing (Spain, Italy)</td><td class="px-4 py-2.5">Thematic</td><td class="px-4 py-2.5"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full">Next</span></td></tr>
+            <tr class="bg-gray-50"><td class="px-4 py-2.5">GDPR deep-dive for hosts</td><td class="px-4 py-2.5">Thematic</td><td class="px-4 py-2.5"><span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">Planned</span></td></tr>
+            <tr><td class="px-4 py-2.5">City Tax tier tables (top 50 cities)</td><td class="px-4 py-2.5">Thematic</td><td class="px-4 py-2.5"><span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full">Next</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 7: ROADMAP -->
+    <!-- ============================================================ -->
+    <section id="roadmap" class="mb-20">
+      <div class="flex items-start gap-4 mb-2">
+        <span class="flex-shrink-0 w-10 h-10 rounded-lg bg-indigo-600 text-white font-bold text-sm flex items-center justify-center">7</span>
+        <div>
+          <h2 class="text-3xl font-bold text-gray-900">Roadmap &amp; next steps</h2>
+          <p class="text-gray-500 mt-1">Where LegalEngine is heading</p>
+        </div>
+      </div>
+      <hr class="border-gray-200 my-6">
+
+      <div class="space-y-4">
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 mt-1 text-green-500">&#10003;</span>
+          <div>
+            <p class="font-semibold text-gray-900">Core Q&A engine with streaming</p>
+            <p class="text-sm text-gray-500">Claude-powered answers grounded in legal guides, streamed in real time.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 mt-1 text-green-500">&#10003;</span>
+          <div>
+            <p class="font-semibold text-gray-900">10 Spanish regional guides</p>
+            <p class="text-sm text-gray-500">Full VUT registration process for all major autonomous communities.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 mt-1 text-green-500">&#10003;</span>
+          <div>
+            <p class="font-semibold text-gray-900">City Tax knowledge base</p>
+            <p class="text-sm text-gray-500">Tourist tax rates and rules for 1,300+ cities across 41 countries.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 mt-1 text-green-500">&#10003;</span>
+          <div>
+            <p class="font-semibold text-gray-900">Rotating category pills</p>
+            <p class="text-sm text-gray-500">7 categories rotating with fade animation to surface more question types.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 mt-1 text-green-500">&#10003;</span>
+          <div>
+            <p class="font-semibold text-gray-900">Production deployment on Railway</p>
+            <p class="text-sm text-gray-500">Auto-deploys on every GitHub push. Custom domain ready.</p>
+          </div>
+        </div>
+
+        <hr class="border-gray-200 my-2">
+
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 mt-1 text-indigo-500">&#9679;</span>
+          <div>
+            <p class="font-semibold text-gray-900">European expansion (Italy, Portugal, France)</p>
+            <p class="text-sm text-gray-500">Add regional guides as legal content is produced for each country.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 mt-1 text-indigo-500">&#9679;</span>
+          <div>
+            <p class="font-semibold text-gray-900">Conversation memory (multi-turn)</p>
+            <p class="text-sm text-gray-500">Allow follow-up questions that reference previous answers in the same session.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 mt-1 text-indigo-500">&#9679;</span>
+          <div>
+            <p class="font-semibold text-gray-900">Analytics dashboard</p>
+            <p class="text-sm text-gray-500">Track most-asked questions, popular regions, and knowledge gaps.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="flex-shrink-0 mt-1 text-indigo-500">&#9679;</span>
+          <div>
+            <p class="font-semibold text-gray-900">Multi-language support</p>
+            <p class="text-sm text-gray-500">Dedicated guides in English, Spanish, Italian, Portuguese, and French.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <hr class="border-gray-200 mt-16 mb-6">
+    <footer class="flex justify-between items-center text-xs text-gray-400 pb-8">
+      <span>LegalEngine &middot; Compliance Assistant Guide v1.0</span>
+      <span>March 2026</span>
+    </footer>
+
+  </div>
+</body>
+</html>

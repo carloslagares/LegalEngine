@@ -1,63 +1,183 @@
 {
   "canarias-green": {
-    "name": "Canarias (La Gomera, El Hierro, La Palma)",
+    "name": "Canarias (La Gomera, El Hierro...)",
     "file": "canarias-green.md",
     "aliases": ["gomera", "hierro", "la palma"],
-    "source": "GUÍA ACTUALIZADA LA GOMERA-EL HIERRO-LA PALMA.pdf"
+    "source": "GUÍA ACTUALIZADA LA GOMERA-EL HIERRO-LA PALMA.pdf",
+    "country": "spain",
+    "emoji": "🏝️",
+    "description": "La Palma, La Gomera, El Hierro — easier rules, 10-year validity."
   },
   "canarias-main": {
-    "name": "Canarias (Tenerife, Gran Canaria, Lanzarote, Fuerteventura)",
+    "name": "Canarias (Tenerife, Gran Canaria, Lanzarote...)",
     "file": "canarias-main.md",
     "aliases": ["canary", "canarias", "tenerife", "gran canaria", "lanzarote", "fuerteventura", "las palmas"],
-    "source": "GUÍA ACTUALIZADA TFE-GC-LTE-FTE.pdf"
+    "source": "GUÍA ACTUALIZADA TFE-GC-LTE-FTE.pdf",
+    "country": "spain",
+    "emoji": "🌋",
+    "description": "Tenerife, Gran Canaria, Lanzarote, Fuerteventura — Ley 6/2025."
   },
   "cantabria": {
     "name": "Cantabria",
     "file": "cantabria.md",
     "aliases": ["cantabria", "santander"],
-    "source": "GUÍA CANTABRIA.pdf"
+    "source": "GUÍA CANTABRIA.pdf",
+    "country": "spain",
+    "emoji": "🏔️",
+    "description": "Santander, Picos de Europa — vivienda turística registration."
   },
   "galicia": {
     "name": "Galicia",
     "file": "galicia.md",
     "aliases": ["galicia", "vigo", "coruña", "santiago", "pontevedra", "lugo", "ourense"],
-    "source": "GUÍA GALICIA (1).pdf"
+    "source": "GUÍA GALICIA (1).pdf",
+    "country": "spain",
+    "emoji": "🌊",
+    "description": "Santiago, Vigo, A Coruña — Xunta de Galicia tourism registration."
   },
   "murcia": {
     "name": "Murcia",
     "file": "murcia.md",
     "aliases": ["murcia", "cartagena", "costa calida", "costa cálida"],
-    "source": "GUÍA MURCIA.pdf"
+    "source": "GUÍA MURCIA.pdf",
+    "country": "spain",
+    "emoji": "🌶️",
+    "description": "Cartagena, Costa Cálida — vivienda de uso turístico registration."
   },
   "andalucia": {
     "name": "Andalucía",
     "file": "andalucia.md",
     "aliases": ["andalusia", "andalucia", "malaga", "málaga", "sevilla", "granada", "cadiz", "cádiz", "cordoba", "córdoba", "huelva", "jaen", "jaén", "almeria", "almería"],
-    "source": "GUÍA PARA ANDALUCÍA.pdf"
+    "source": "GUÍA PARA ANDALUCÍA.pdf",
+    "country": "spain",
+    "emoji": "☀️",
+    "description": "Málaga, Sevilla, Cádiz, Granada — Junta registration and tourist registry."
   },
   "cataluna": {
     "name": "Cataluña",
     "file": "cataluna.md",
     "aliases": ["catalonia", "cataluña", "barcelona", "girona", "tarragona", "lleida", "costa brava"],
-    "source": "GUÍA PARA CATALUÑA.pdf"
+    "source": "GUÍA PARA CATALUÑA.pdf",
+    "country": "spain",
+    "emoji": "🏔️",
+    "description": "Barcelona, Costa Brava, Tarragona — HUTT license and tourist tax."
   },
   "valencia": {
     "name": "Comunidad Valenciana",
     "file": "valencia.md",
     "aliases": ["valencia", "valenciana", "alicante", "castellon", "castellón", "benidorm", "costa blanca"],
-    "source": "GUÍA PARA LA COMUNIDAD VALENCIANA.pdf"
+    "source": "GUÍA PARA LA COMUNIDAD VALENCIANA.pdf",
+    "country": "spain",
+    "emoji": "🍊",
+    "description": "Alicante, Valencia, Castellón — Comunitat Valenciana registration."
   },
   "baleares": {
     "name": "Islas Baleares",
     "file": "baleares.md",
     "aliases": ["balearic", "baleares", "mallorca", "ibiza", "menorca", "formentera", "palma"],
-    "source": "GUÍA PARA LAS ISLAS BALEARES (1).pdf"
+    "source": "GUÍA PARA LAS ISLAS BALEARES (1).pdf",
+    "country": "spain",
+    "emoji": "⛵",
+    "description": "Mallorca, Ibiza, Menorca — holiday rental license (ETV)."
   },
   "madrid": {
     "name": "Madrid",
     "file": "madrid.md",
     "aliases": ["madrid"],
-    "source": "GUÍA PARA MADRID.pdf"
+    "source": "GUÍA PARA MADRID.pdf",
+    "country": "spain",
+    "emoji": "🏛️",
+    "description": "Comunidad de Madrid — vivienda de uso turístico registration."
+  },
+  "pais-vasco": {
+    "name": "País Vasco",
+    "file": "pais-vasco.md",
+    "aliases": ["pais vasco", "país vasco", "euskadi", "basque", "bilbao", "san sebastian", "san sebastián", "donostia", "vitoria", "guipuzcoa", "vizcaya", "álava"],
+    "source": "auto-generated",
+    "country": "spain",
+    "emoji": "🏗️",
+    "description": "Bilbao, San Sebastián, Vitoria — Decreto 101/2018 VUT registration."
+  },
+  "asturias": {
+    "name": "Asturias",
+    "file": "asturias.md",
+    "aliases": ["asturias", "oviedo", "gijón", "gijon", "avilés", "aviles", "costa verde"],
+    "source": "auto-generated",
+    "country": "spain",
+    "emoji": "🏞️",
+    "description": "Oviedo, Gijón, Costa Verde — Decreto 48/2016 VUT registration."
+  },
+  "italy": {
+    "name": "Italy",
+    "file": "italy.md",
+    "aliases": ["italy", "italia", "rome", "roma", "milan", "milano", "florence", "firenze", "naples", "napoli", "venice", "venezia", "bologna", "lucca", "turin", "torino", "sicily", "sardinia", "amalfi"],
+    "source": "auto-generated",
+    "country": "italy",
+    "emoji": "🇮🇹",
+    "description": "CIN code, Alloggiati Web, ISTAT, tourist tax, cedolare secca."
+  },
+  "portugal": {
+    "name": "Portugal",
+    "file": "portugal.md",
+    "aliases": ["portugal", "lisbon", "lisboa", "porto", "oporto", "algarve", "faro", "madeira", "azores"],
+    "source": "auto-generated",
+    "country": "portugal",
+    "emoji": "🇵🇹",
+    "description": "Alojamento Local license, SEF/SIBA guest reporting, tourist tax."
+  },
+  "france": {
+    "name": "France",
+    "file": "france.md",
+    "aliases": ["france", "francia", "paris", "nice", "niza", "cannes", "lyon", "marseille", "bordeaux", "toulouse"],
+    "source": "auto-generated",
+    "country": "france",
+    "emoji": "🇫🇷",
+    "description": "Mairie registration, taxe de séjour, 120-day limit, Loi Le Meur."
+  },
+  "croatia": {
+    "name": "Croatia",
+    "file": "croatia.md",
+    "aliases": ["croatia", "croacia", "dubrovnik", "split", "zagreb", "zadar", "hvar", "pula", "rovinj"],
+    "source": "auto-generated",
+    "country": "croatia",
+    "emoji": "🇭🇷",
+    "description": "eVisitor system, police registration, flat-rate tourist tax."
+  },
+  "greece": {
+    "name": "Greece",
+    "file": "greece.md",
+    "aliases": ["greece", "grecia", "athens", "atenas", "santorini", "mykonos", "crete", "rhodes", "corfu", "thessaloniki"],
+    "source": "auto-generated",
+    "country": "greece",
+    "emoji": "🇬🇷",
+    "description": "AADE rental registry, 90-day limit, myDATA e-invoicing."
+  },
+  "austria": {
+    "name": "Austria",
+    "file": "austria.md",
+    "aliases": ["austria", "vienna", "viena", "salzburg", "innsbruck", "graz", "tyrol", "vorarlberg"],
+    "source": "auto-generated",
+    "country": "austria",
+    "emoji": "🇦🇹",
+    "description": "Feratel guest registration, Ortstaxe, state-level regulations."
+  },
+  "czech-republic": {
+    "name": "Czech Republic",
+    "file": "czech-republic.md",
+    "aliases": ["czech", "chequia", "prague", "praga", "brno", "czech republic"],
+    "source": "auto-generated",
+    "country": "czech-republic",
+    "emoji": "🇨🇿",
+    "description": "UbyPort police reporting, trade license, accommodation fees."
+  },
+  "germany": {
+    "name": "Germany",
+    "file": "germany.md",
+    "aliases": ["germany", "alemania", "berlin", "munich", "münchen", "hamburg", "frankfurt", "düsseldorf", "cologne", "köln", "stuttgart"],
+    "source": "auto-generated",
+    "country": "germany",
+    "emoji": "🇩🇪",
+    "description": "Zweckentfremdungsverbot, Meldeschein, city-specific permits."
   },
   "city-tax": {
     "name": "City Tax / Tourist Tax (Europe)",

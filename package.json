@@ -4,17 +4,20 @@
   "description": "Vacation rental compliance assistant powered by Claude AI",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "lsof -ti:3000 | xargs kill -9 2>/dev/null; node server.js",
     "extract": "node scripts/extract-guides.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
     "better-sqlite3": "^12.8.0",
+    "connect-sqlite3": "^0.9.16",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "express-session": "^1.19.0",
+    "multer": "^2.1.1"
   },
   "devDependencies": {
-    "pdf-parse": "^1.1.1"
+    "pdf-parse": "^1.1.4"
   }
 }

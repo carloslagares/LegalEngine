@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LegalEngine Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --navy: #161643;
+    --purple: #6C5CE7;
+    --purple-light: #a78bfa;
+    --bg: #f4f5f7;
+    --white: #ffffff;
+    --border: #e5e7eb;
+    --text: #374151;
+    --text-light: #6b7280;
+    --green: #10b981;
+    --red: #ef4444;
+    --orange: #f59e0b;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* ── Login ── */
+  .login-wrap { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  .login-box { background: var(--white); border-radius: 16px; padding: 40px; width: 380px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
+  .login-box h1 { font-size: 24px; color: var(--navy); margin-bottom: 4px; }
+  .login-box p { color: var(--text-light); font-size: 14px; margin-bottom: 24px; }
+  .login-box .logo { font-size: 28px; font-weight: 700; color: var(--navy); margin-bottom: 20px; }
+  .login-box .logo span { color: var(--purple); }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .field input { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
+  .field input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(108,92,231,0.15); }
+  .login-btn { width: 100%; padding: 12px; background: var(--purple); color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .login-btn:hover { background: #5a4bd1; }
+  .login-error { color: var(--red); font-size: 13px; margin-top: 12px; display: none; }
+
+  /* ── Layout ── */
+  .app { display: none; }
+  .topbar { background: var(--navy); color: #fff; padding: 0 32px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+  .topbar .brand { font-size: 18px; font-weight: 700; }
+  .topbar .brand span { color: var(--purple-light); }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .topbar-right .user { font-size: 13px; color: #c4b5fd; }
+  .logout-btn { background: none; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+  .logout-btn:hover { background: rgba(255,255,255,0.1); }
+
+  .tabs { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; gap: 0; }
+  .tab { padding: 14px 24px; font-size: 14px; font-weight: 600; color: var(--text-light); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+  .content { padding: 24px 32px; max-width: 1200px; }
+
+  /* ── Tables ── */
+  .card { background: var(--white); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+  .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .card-header h2 { font-size: 16px; color: var(--navy); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 16px; background: #f9fafb; color: var(--text-light); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 16px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover { background: #f9fafb; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .badge-blue { background: #eff6ff; color: #2563eb; }
+  .badge-green { background: #ecfdf5; color: #059669; }
+  .badge-gray { background: #f3f4f6; color: #6b7280; }
+  .badge-orange { background: #fffbeb; color: #d97706; }
+  .badge-purple { background: #f5f3ff; color: #7c3aed; }
+
+  /* ── Buttons ── */
+  .btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: var(--purple); color: #fff; }
+  .btn-primary:hover { background: #5a4bd1; }
+  .btn-danger { background: var(--red); color: #fff; }
+  .btn-danger:hover { background: #dc2626; }
+  .btn-outline { background: none; border: 1px solid var(--border); color: var(--text); }
+  .btn-outline:hover { background: #f9fafb; }
+  .btn-sm { padding: 4px 10px; font-size: 12px; }
+
+  /* ── Filters ── */
+  .filters { display: flex; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; align-items: center; }
+  .filters input, .filters select { padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; outline: none; }
+  .filters input:focus, .filters select:focus { border-color: var(--purple); }
+
+  /* ── Pagination ── */
+  .pagination { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-light); }
+  .page-btns { display: flex; gap: 4px; }
+  .page-btns button { padding: 4px 12px; border: 1px solid var(--border); background: var(--white); border-radius: 4px; cursor: pointer; font-size: 12px; }
+  .page-btns button.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+  .page-btns button:disabled { opacity: 0.4; cursor: default; }
+
+  /* ── Modal ── */
+  .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--white); border-radius: 16px; width: 480px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  .modal-head { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .modal-head h3 { font-size: 18px; color: var(--navy); }
+  .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-light); }
+  .modal-body { padding: 24px; }
+  .modal-body .field { margin-bottom: 16px; }
+  .modal-body select { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; background: #fff; }
+  .modal-body select:focus { border-color: var(--purple); }
+  .modal-foot { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+
+  .upload-area { border: 2px dashed var(--border); border-radius: 8px; padding: 24px; text-align: center; cursor: pointer; transition: all 0.15s; }
+  .upload-area:hover { border-color: var(--purple); background: #faf9ff; }
+  .upload-area.has-file { border-color: var(--green); background: #ecfdf5; }
+  .upload-area input { display: none; }
+  .upload-area p { font-size: 14px; color: var(--text-light); }
+  .upload-area .file-name { font-size: 13px; color: var(--green); font-weight: 600; margin-top: 4px; }
+
+  .empty-state { text-align: center; padding: 48px 20px; color: var(--text-light); }
+  .empty-state h3 { font-size: 16px; color: var(--text); margin-bottom: 4px; }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #fff; z-index: 1000; animation: slideIn 0.3s ease; }
+  .toast-success { background: var(--green); }
+  .toast-error { background: var(--red); }
+  @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  /* ── Analytics ── */
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 20px; }
+  .stat-card { background: var(--white); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); }
+  .stat-value { font-size: 28px; font-weight: 700; color: var(--navy); }
+  .stat-label { font-size: 13px; color: var(--text-light); margin-top: 4px; }
+  .stat-sub { font-size: 11px; color: var(--green); margin-top: 2px; }
+  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .chart-card { min-height: 280px; }
+  .chart-body { padding: 16px 20px; height: 240px; }
+  @media (max-width: 900px) { .charts-row { grid-template-columns: 1fr; } }
+
+  /* ── Chat detail ── */
+  .chat-msg { padding: 10px 14px; border-radius: 12px; margin-bottom: 8px; max-width: 85%; font-size: 13px; line-height: 1.5; word-break: break-word; }
+  .chat-msg-u { background: var(--purple); color: #fff; margin-left: auto; border-bottom-right-radius: 4px; }
+  .chat-msg-a { background: #f3f4f6; color: var(--text); border-bottom-left-radius: 4px; }
+  .chat-detail-wrap { display: flex; flex-direction: column; max-height: 60vh; overflow-y: auto; padding: 8px 0; }
+  .chat-meta { font-size: 11px; color: var(--text-light); text-align: center; margin-bottom: 12px; }
+
+  tr.clickable { cursor: pointer; }
+  tr.clickable:hover { background: #f0eeff; }
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div class="login-wrap" id="loginView">
+  <div class="login-box">
+    <div class="logo">chekin<span>.</span></div>
+    <h1>Admin Panel</h1>
+    <p>Sign in to manage guides and leads</p>
+    <form id="loginForm">
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="loginUser" required autocomplete="username">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="loginPass" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="login-btn">Sign In</button>
+      <p class="login-error" id="loginError">Invalid credentials</p>
+    </form>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div class="app" id="appView">
+  <div class="topbar">
+    <div class="brand">chekin<span>.</span> Admin</div>
+    <div class="topbar-right">
+      <span class="user">admin</span>
+      <button class="logout-btn" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="guides" onclick="switchTab('guides')">Guides</div>
+    <div class="tab" data-tab="leads" onclick="switchTab('leads')">Leads</div>
+    <div class="tab" data-tab="chats" onclick="switchTab('chats')">Chats</div>
+    <div class="tab" data-tab="analytics" onclick="switchTab('analytics')">Analytics</div>
+  </div>
+
+  <!-- ── GUIDES TAB ── -->
+  <div class="content tab-content" id="tab-guides">
+    <div class="card">
+      <div class="card-header">
+        <h2>Knowledge Base Guides</h2>
+        <button class="btn btn-primary" onclick="openUploadModal()">+ Upload Guide</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Region</th>
+            <th>Country</th>
+            <th>Type</th>
+            <th>Aliases</th>
+            <th>Source</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="guidesBody"></tbody>
+      </table>
+      <div class="empty-state" id="guidesEmpty" style="display:none">
+        <h3>No guides yet</h3>
+        <p>Upload a PDF to get started</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LEADS TAB ── -->
+  <div class="content tab-content" id="tab-leads" style="display:none">
+    <div class="card">
+      <div class="card-header">
+        <h2>Captured Leads</h2>
+        <button class="btn btn-outline" onclick="exportCSV()">Export CSV</button>
+      </div>
+      <div class="filters">
+        <select id="filterType" onchange="loadLeads()">
+          <option value="">All types</option>
+          <option value="guide_download">Guide download</option>
+          <option value="lawyer">Lawyer inquiry</option>
+        </select>
+        <input type="text" id="filterSearch" placeholder="Search email or name..." oninput="debounceLeads()">
+        <input type="date" id="filterFrom" onchange="loadLeads()">
+        <input type="date" id="filterTo" onchange="loadLeads()">
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Company</th>
+            <th>Region</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="leadsBody"></tbody>
+      </table>
+      <div class="empty-state" id="leadsEmpty" style="display:none">
+        <h3>No leads found</h3>
+        <p>Leads will appear here when users submit forms</p>
+      </div>
+      <div class="pagination" id="leadsPagination" style="display:none">
+        <span id="leadsInfo"></span>
+        <div class="page-btns" id="leadsPages"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CHATS TAB ── -->
+  <div class="content tab-content" id="tab-chats" style="display:none">
+    <div class="card">
+      <div class="card-header">
+        <h2>Chat Sessions</h2>
+        <span id="chatsCount" style="font-size:13px;color:var(--text-light)"></span>
+      </div>
+      <div class="filters">
+        <input type="text" id="chatSearch" placeholder="Search messages..." oninput="debounceChats()">
+        <input type="date" id="chatFrom" onchange="loadChats()">
+        <input type="date" id="chatTo" onchange="loadChats()">
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Session</th>
+            <th>Region</th>
+            <th>Lang</th>
+            <th>Messages</th>
+            <th>Started</th>
+            <th>Last Activity</th>
+          </tr>
+        </thead>
+        <tbody id="chatsBody"></tbody>
+      </table>
+      <div class="empty-state" id="chatsEmpty" style="display:none">
+        <h3>No chat sessions yet</h3>
+        <p>Sessions will appear here as users chat</p>
+      </div>
+      <div class="pagination" id="chatsPagination" style="display:none">
+        <span id="chatsInfo"></span>
+        <div class="page-btns" id="chatsPages"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ANALYTICS TAB ── -->
+  <div class="content tab-content" id="tab-analytics" style="display:none">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" id="statQuestions">-</div>
+        <div class="stat-label">Total Questions</div>
+        <div class="stat-sub" id="statQuestionsToday"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statLeads">-</div>
+        <div class="stat-label">Total Leads</div>
+        <div class="stat-sub" id="statLeadsToday"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statSessions">-</div>
+        <div class="stat-label">Chat Sessions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statCacheRate">-</div>
+        <div class="stat-label">Cache Hit Rate</div>
+        <div class="stat-sub" id="statRagStatus"></div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="card chart-card">
+        <div class="card-header"><h2>Questions Over Time (30d)</h2></div>
+        <div class="chart-body"><canvas id="chartQuestions"></canvas></div>
+      </div>
+      <div class="card chart-card">
+        <div class="card-header"><h2>Top Regions</h2></div>
+        <div class="chart-body"><canvas id="chartRegions"></canvas></div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="card chart-card">
+        <div class="card-header"><h2>Questions vs Leads (30d)</h2></div>
+        <div class="chart-body"><canvas id="chartConversions"></canvas></div>
+      </div>
+      <div class="card chart-card">
+        <div class="card-header"><h2>Languages</h2></div>
+        <div class="chart-body"><canvas id="chartLanguages"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="card-header">
+        <h2>Recent Questions</h2>
+        <div>
+          <button class="btn btn-outline btn-sm" onclick="clearCache()">Clear Cache</button>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Question</th>
+            <th>Region</th>
+            <th>Lang</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="recentQuestionsBody"></tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="card-header"><h2>Top Guide Downloads</h2></div>
+      <table>
+        <thead><tr><th>Region</th><th>Downloads</th></tr></thead>
+        <tbody id="guideDownloadsBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── UPLOAD MODAL ── -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Upload New Guide</h3>
+      <button class="modal-close" onclick="closeUploadModal()">&times;</button>
+    </div>
+    <form id="uploadForm">
+      <div class="modal-body">
+        <div class="field">
+          <label>Country</label>
+          <select id="uploadCountry" required onchange="updateRegionOptions()">
+            <option value="">Select country...</option>
+            <option value="spain">Spain</option>
+            <option value="italy">Italy</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Region</label>
+          <select id="uploadRegion" required>
+            <option value="">Select country first...</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>PDF Guide</label>
+          <div class="upload-area" id="uploadArea" onclick="document.getElementById('uploadFile').click()">
+            <input type="file" id="uploadFile" accept=".pdf" onchange="onFileSelected(this)">
+            <p>Click to select PDF file</p>
+            <div class="file-name" id="fileName"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-outline" onclick="closeUploadModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="uploadBtn">Upload & Process</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── CHAT DETAIL MODAL ── -->
+<div class="modal-overlay" id="chatDetailModal">
+  <div class="modal" style="width:640px">
+    <div class="modal-head">
+      <h3>Chat Session</h3>
+      <button class="modal-close" onclick="closeChatDetail()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="chat-meta" id="chatDetailMeta"></div>
+      <div class="chat-detail-wrap" id="chatDetailBody"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Region options per country ──
+var REGIONS = {
+  spain: [
+    { value: 'andalucia', label: 'Andalucia' },
+    { value: 'aragon', label: 'Aragon' },
+    { value: 'asturias', label: 'Asturias' },
+    { value: 'baleares', label: 'Islas Baleares' },
+    { value: 'canarias', label: 'Canarias' },
+    { value: 'canarias-main', label: 'Canarias - Main Islands (TFE, GC, LTE, FTE)' },
+    { value: 'canarias-green', label: 'Canarias - Green Islands (LP, LG, EH)' },
+    { value: 'cantabria', label: 'Cantabria' },
+    { value: 'castilla-la-mancha', label: 'Castilla-La Mancha' },
+    { value: 'castilla-y-leon', label: 'Castilla y Leon' },
+    { value: 'cataluna', label: 'Cataluna' },
+    { value: 'extremadura', label: 'Extremadura' },
+    { value: 'galicia', label: 'Galicia' },
+    { value: 'madrid', label: 'Madrid' },
+    { value: 'murcia', label: 'Murcia' },
+    { value: 'navarra', label: 'Navarra' },
+    { value: 'pais-vasco', label: 'Pais Vasco' },
+    { value: 'la-rioja', label: 'La Rioja' },
+    { value: 'valencia', label: 'Comunidad Valenciana' }
+  ],
+  italy: [
+    { value: 'abruzzo', label: 'Abruzzo' },
+    { value: 'basilicata', label: 'Basilicata' },
+    { value: 'calabria', label: 'Calabria' },
+    { value: 'campania', label: 'Campania' },
+    { value: 'emilia-romagna', label: 'Emilia-Romagna' },
+    { value: 'friuli-venezia-giulia', label: 'Friuli Venezia Giulia' },
+    { value: 'lazio', label: 'Lazio' },
+    { value: 'liguria', label: 'Liguria' },
+    { value: 'lombardia', label: 'Lombardia' },
+    { value: 'marche', label: 'Marche' },
+    { value: 'molise', label: 'Molise' },
+    { value: 'piemonte', label: 'Piemonte' },
+    { value: 'puglia', label: 'Puglia' },
+    { value: 'sardegna', label: 'Sardegna' },
+    { value: 'sicilia', label: 'Sicilia' },
+    { value: 'toscana', label: 'Toscana' },
+    { value: 'trentino-alto-adige', label: 'Trentino-Alto Adige' },
+    { value: 'umbria', label: 'Umbria' },
+    { value: 'valle-d-aosta', label: "Valle d'Aosta" },
+    { value: 'veneto', label: 'Veneto' }
+  ]
+};
+
+// ── Auth ──
+function checkAuth() {
+  fetch('/api/admin/me').then(function(r) { return r.json(); }).then(function(d) {
+    if (d.authenticated) { showApp(); } else { showLogin(); }
+  }).catch(function() { showLogin(); });
+}
+
+function showLogin() {
+  document.getElementById('loginView').style.display = 'flex';
+  document.getElementById('appView').style.display = 'none';
+}
+
+function showApp() {
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('appView').style.display = 'block';
+  loadGuides();
+}
+
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var user = document.getElementById('loginUser').value;
+  var pass = document.getElementById('loginPass').value;
+  fetch('/api/admin/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user: user, pass: pass })
+  }).then(function(r) {
+    if (r.ok) { showApp(); }
+    else { document.getElementById('loginError').style.display = ''; }
+  });
+});
+
+function logout() {
+  fetch('/api/admin/logout', { method: 'POST' }).then(function() { showLogin(); });
+}
+
+// ── Tabs ──
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
+  document.querySelectorAll('.tab-content').forEach(function(c) { c.style.display = 'none'; });
+  document.getElementById('tab-' + tab).style.display = '';
+  if (tab === 'leads') loadLeads();
+  if (tab === 'guides') loadGuides();
+  if (tab === 'chats') loadChats();
+  if (tab === 'analytics') loadAnalytics();
+}
+
+// ── Guides ──
+function loadGuides() {
+  fetch('/api/admin/guides').then(function(r) { return r.json(); }).then(function(guides) {
+    var body = document.getElementById('guidesBody');
+    var empty = document.getElementById('guidesEmpty');
+    if (guides.length === 0) { body.innerHTML = ''; empty.style.display = ''; return; }
+    empty.style.display = 'none';
+    body.innerHTML = guides.map(function(g) {
+      var countryBadge = g.country === 'italy' ? '<span class="badge badge-green">Italy</span>' :
+                         g.country === 'spain' ? '<span class="badge badge-blue">Spain</span>' :
+                         '<span class="badge badge-gray">' + (g.country || '-') + '</span>';
+      var typeBadge = g.type === 'thematic' ? '<span class="badge badge-gray">Thematic</span>' : '<span class="badge badge-blue">Regional</span>';
+      var aliases = (g.aliases || []).slice(0, 3).join(', ');
+      if ((g.aliases || []).length > 3) aliases += '...';
+      var isThematic = g.type === 'thematic';
+      return '<tr>' +
+        '<td><strong>' + (g.emoji || '') + ' ' + g.name + '</strong></td>' +
+        '<td>' + countryBadge + '</td>' +
+        '<td>' + typeBadge + '</td>' +
+        '<td style="color:#6b7280;font-size:12px">' + aliases + '</td>' +
+        '<td style="font-size:12px;color:#6b7280">' + (g.source || '-') + '</td>' +
+        '<td>' + (isThematic ? '' : '<button class="btn btn-danger btn-sm" onclick="deleteGuide(\'' + g.slug + '\',\'' + g.name.replace(/'/g, "\\'") + '\')">Delete</button>') + '</td>' +
+        '</tr>';
+    }).join('');
+  });
+}
+
+function deleteGuide(slug, name) {
+  if (!confirm('Delete guide "' + name + '"? This will remove it from the knowledge base.')) return;
+  fetch('/api/admin/guides/' + slug, { method: 'DELETE' }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.ok) { toast('Guide deleted', 'success'); loadGuides(); }
+    else { toast(d.error || 'Error', 'error'); }
+  });
+}
+
+// ── Upload Modal ──
+function openUploadModal() {
+  document.getElementById('uploadModal').classList.add('active');
+  document.getElementById('uploadForm').reset();
+  document.getElementById('fileName').textContent = '';
+  document.getElementById('uploadArea').classList.remove('has-file');
+  document.getElementById('uploadRegion').innerHTML = '<option value="">Select country first...</option>';
+}
+
+function closeUploadModal() {
+  document.getElementById('uploadModal').classList.remove('active');
+}
+
+function updateRegionOptions() {
+  var country = document.getElementById('uploadCountry').value;
+  var sel = document.getElementById('uploadRegion');
+  if (!country || !REGIONS[country]) {
+    sel.innerHTML = '<option value="">Select country first...</option>';
+    return;
+  }
+  sel.innerHTML = '<option value="">Select region...</option>' +
+    REGIONS[country].map(function(r) { return '<option value="' + r.value + '">' + r.label + '</option>'; }).join('');
+}
+
+function onFileSelected(input) {
+  var area = document.getElementById('uploadArea');
+  var nameEl = document.getElementById('fileName');
+  if (input.files.length > 0) {
+    area.classList.add('has-file');
+    nameEl.textContent = input.files[0].name;
+  } else {
+    area.classList.remove('has-file');
+    nameEl.textContent = '';
+  }
+}
+
+document.getElementById('uploadForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var btn = document.getElementById('uploadBtn');
+  var file = document.getElementById('uploadFile').files[0];
+  if (!file) { toast('Please select a PDF file', 'error'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Processing...';
+
+  var fd = new FormData();
+  fd.append('country', document.getElementById('uploadCountry').value);
+  fd.append('region', document.getElementById('uploadRegion').value);
+  fd.append('pdf', file);
+
+  fetch('/api/admin/guides', { method: 'POST', body: fd }).then(function(r) { return r.json(); }).then(function(d) {
+    btn.disabled = false;
+    btn.textContent = 'Upload & Process';
+    if (d.ok) {
+      toast('Guide "' + d.name + '" uploaded successfully!', 'success');
+      closeUploadModal();
+      loadGuides();
+    } else {
+      toast(d.error || 'Upload failed', 'error');
+    }
+  }).catch(function() {
+    btn.disabled = false;
+    btn.textContent = 'Upload & Process';
+    toast('Upload failed', 'error');
+  });
+});
+
+// ── Leads ──
+var leadsPage = 1;
+var leadsDebounce = null;
+
+function debounceLeads() {
+  clearTimeout(leadsDebounce);
+  leadsDebounce = setTimeout(loadLeads, 300);
+}
+
+function loadLeads(page) {
+  if (page) leadsPage = page;
+  var type = document.getElementById('filterType').value;
+  var search = document.getElementById('filterSearch').value;
+  var from = document.getElementById('filterFrom').value;
+  var to = document.getElementById('filterTo').value;
+
+  var params = new URLSearchParams({ page: leadsPage, limit: 50 });
+  if (type) params.set('type', type);
+  if (search) params.set('search', search);
+  if (from) params.set('from', from);
+  if (to) params.set('to', to);
+
+  fetch('/api/admin/leads?' + params.toString()).then(function(r) { return r.json(); }).then(function(data) {
+    var body = document.getElementById('leadsBody');
+    var empty = document.getElementById('leadsEmpty');
+    var pag = document.getElementById('leadsPagination');
+
+    if (data.leads.length === 0) {
+      body.innerHTML = '';
+      empty.style.display = '';
+      pag.style.display = 'none';
+      return;
+    }
+    empty.style.display = 'none';
+
+    body.innerHTML = data.leads.map(function(l) {
+      var typeBadge = l.type === 'guide_download' ? '<span class="badge badge-blue">Guide</span>' :
+                      l.type === 'lawyer' ? '<span class="badge badge-green">Lawyer</span>' :
+                      '<span class="badge badge-gray">' + l.type + '</span>';
+      return '<tr>' +
+        '<td>' + l.id + '</td>' +
+        '<td>' + typeBadge + '</td>' +
+        '<td>' + (l.email || '-') + '</td>' +
+        '<td>' + (l.name || '-') + '</td>' +
+        '<td>' + (l.company || '-') + '</td>' +
+        '<td>' + (l.region || '-') + '</td>' +
+        '<td style="font-size:12px;color:#6b7280">' + (l.created_at || '') + '</td>' +
+        '</tr>';
+    }).join('');
+
+    if (data.pages > 1) {
+      pag.style.display = '';
+      document.getElementById('leadsInfo').textContent = 'Showing ' + ((data.page - 1) * 50 + 1) + '-' + Math.min(data.page * 50, data.total) + ' of ' + data.total;
+      var btns = '';
+      btns += '<button ' + (data.page <= 1 ? 'disabled' : 'onclick="loadLeads(' + (data.page - 1) + ')"') + '>&laquo;</button>';
+      for (var i = 1; i <= Math.min(data.pages, 10); i++) {
+        btns += '<button ' + (i === data.page ? 'class="active"' : 'onclick="loadLeads(' + i + ')"') + '>' + i + '</button>';
+      }
+      btns += '<button ' + (data.page >= data.pages ? 'disabled' : 'onclick="loadLeads(' + (data.page + 1) + ')"') + '>&raquo;</button>';
+      document.getElementById('leadsPages').innerHTML = btns;
+    } else {
+      pag.style.display = 'none';
+    }
+  });
+}
+
+// ── Chats ──
+var chatsPage = 1;
+var chatsDebounce = null;
+
+function debounceChats() {
+  clearTimeout(chatsDebounce);
+  chatsDebounce = setTimeout(loadChats, 300);
+}
+
+function loadChats(page) {
+  if (page) chatsPage = page;
+  var search = document.getElementById('chatSearch').value;
+  var from = document.getElementById('chatFrom').value;
+  var to = document.getElementById('chatTo').value;
+
+  var params = new URLSearchParams({ page: chatsPage, limit: 50 });
+  if (search) params.set('search', search);
+  if (from) params.set('from', from);
+  if (to) params.set('to', to);
+
+  fetch('/api/admin/chats?' + params.toString()).then(function(r) { return r.json(); }).then(function(data) {
+    var body = document.getElementById('chatsBody');
+    var empty = document.getElementById('chatsEmpty');
+    var pag = document.getElementById('chatsPagination');
+    document.getElementById('chatsCount').textContent = data.total + ' sessions';
+
+    if (data.chats.length === 0) {
+      body.innerHTML = '';
+      empty.style.display = '';
+      pag.style.display = 'none';
+      return;
+    }
+    empty.style.display = 'none';
+
+    body.innerHTML = data.chats.map(function(c) {
+      var langBadge = c.lang === 'es' ? '<span class="badge badge-orange">ES</span>' : '<span class="badge badge-blue">EN</span>';
+      return '<tr class="clickable" onclick="openChatDetail(\'' + c.id + '\')">' +
+        '<td style="font-family:monospace;font-size:11px">' + c.id.substring(0, 8) + '...</td>' +
+        '<td>' + (c.region ? '<span class="badge badge-purple">' + c.region + '</span>' : '-') + '</td>' +
+        '<td>' + langBadge + '</td>' +
+        '<td>' + c.message_count + '</td>' +
+        '<td style="font-size:12px;color:#6b7280">' + (c.started_at || '') + '</td>' +
+        '<td style="font-size:12px;color:#6b7280">' + (c.updated_at || '') + '</td>' +
+        '</tr>';
+    }).join('');
+
+    if (data.pages > 1) {
+      pag.style.display = '';
+      document.getElementById('chatsInfo').textContent = 'Showing ' + ((data.page - 1) * 50 + 1) + '-' + Math.min(data.page * 50, data.total) + ' of ' + data.total;
+      var btns = '';
+      btns += '<button ' + (data.page <= 1 ? 'disabled' : 'onclick="loadChats(' + (data.page - 1) + ')"') + '>&laquo;</button>';
+      for (var i = 1; i <= Math.min(data.pages, 10); i++) {
+        btns += '<button ' + (i === data.page ? 'class="active"' : 'onclick="loadChats(' + i + ')"') + '>' + i + '</button>';
+      }
+      btns += '<button ' + (data.page >= data.pages ? 'disabled' : 'onclick="loadChats(' + (data.page + 1) + ')"') + '>&raquo;</button>';
+      document.getElementById('chatsPages').innerHTML = btns;
+    } else {
+      pag.style.display = 'none';
+    }
+  });
+}
+
+function openChatDetail(id) {
+  fetch('/api/admin/chats/' + id).then(function(r) { return r.json(); }).then(function(chat) {
+    document.getElementById('chatDetailMeta').innerHTML =
+      'Session: <strong>' + chat.id.substring(0, 12) + '...</strong> | Region: <strong>' + (chat.region || 'none') + '</strong> | Lang: <strong>' + chat.lang + '</strong> | Started: ' + chat.started_at;
+
+    var html = '';
+    (chat.messages || []).forEach(function(m) {
+      var cls = m.role === 'user' ? 'chat-msg-u' : 'chat-msg-a';
+      var content = m.role === 'assistant' ? m.content : escapeHtml(m.content);
+      html += '<div class="chat-msg ' + cls + '">' + content + '</div>';
+    });
+    document.getElementById('chatDetailBody').innerHTML = html;
+    document.getElementById('chatDetailModal').classList.add('active');
+  });
+}
+
+function closeChatDetail() {
+  document.getElementById('chatDetailModal').classList.remove('active');
+}
+
+// ── Analytics ──
+var analyticsCharts = {};
+
+function loadAnalytics() {
+  fetch('/api/admin/analytics').then(function(r) { return r.json(); }).then(function(data) {
+    var ov = data.overview;
+    document.getElementById('statQuestions').textContent = ov.totalQuestions;
+    document.getElementById('statQuestionsToday').textContent = ov.questionsToday + ' today';
+    document.getElementById('statLeads').textContent = ov.totalLeads;
+    document.getElementById('statLeadsToday').textContent = ov.leadsToday + ' today';
+    document.getElementById('statSessions').textContent = ov.totalSessions;
+    document.getElementById('statCacheRate').textContent = ov.cacheRate + '%';
+    document.getElementById('statRagStatus').textContent = ov.ragEnabled ? 'RAG: Active' : 'RAG: Off (no Voyage key)';
+
+    // Questions over time chart
+    renderLineChart('chartQuestions', 'questionsChart',
+      data.questionsOverTime.map(function(d) { return d.day.substring(5); }),
+      data.questionsOverTime.map(function(d) { return d.count; }),
+      'Questions', '#6C5CE7'
+    );
+
+    // Top regions chart
+    renderBarChart('chartRegions', 'regionsChart',
+      data.topRegions.map(function(d) { return d.region; }),
+      data.topRegions.map(function(d) { return d.count; }),
+      'Questions', '#6C5CE7'
+    );
+
+    // Conversions chart
+    renderDualLineChart('chartConversions', 'conversionsChart',
+      data.conversions.map(function(d) { return d.day.substring(5); }),
+      data.conversions.map(function(d) { return d.questions; }),
+      data.conversions.map(function(d) { return d.leads; })
+    );
+
+    // Languages chart
+    renderDoughnutChart('chartLanguages', 'languagesChart',
+      data.topLanguages.map(function(d) { return d.lang === 'es' ? 'Spanish' : 'English'; }),
+      data.topLanguages.map(function(d) { return d.count; })
+    );
+
+    // Recent questions table
+    var rqBody = document.getElementById('recentQuestionsBody');
+    rqBody.innerHTML = data.recentQuestions.map(function(q) {
+      return '<tr>' +
+        '<td style="max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escapeHtml(q.question || '-') + '</td>' +
+        '<td>' + (q.region ? '<span class="badge badge-purple">' + q.region + '</span>' : '-') + '</td>' +
+        '<td>' + (q.lang || '-') + '</td>' +
+        '<td style="font-size:12px;color:#6b7280">' + (q.created_at || '') + '</td>' +
+        '</tr>';
+    }).join('');
+
+    // Guide downloads table
+    var gdBody = document.getElementById('guideDownloadsBody');
+    if (data.guideDownloads.length === 0) {
+      gdBody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:#6b7280">No downloads yet</td></tr>';
+    } else {
+      gdBody.innerHTML = data.guideDownloads.map(function(g) {
+        return '<tr><td>' + (g.region || '-') + '</td><td><strong>' + g.count + '</strong></td></tr>';
+      }).join('');
+    }
+  });
+}
+
+function renderLineChart(canvasId, chartKey, labels, data, label, color) {
+  if (analyticsCharts[chartKey]) analyticsCharts[chartKey].destroy();
+  var ctx = document.getElementById(canvasId).getContext('2d');
+  analyticsCharts[chartKey] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{ label: label, data: data, borderColor: color, backgroundColor: color + '20', fill: true, tension: 0.3, pointRadius: 2 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+  });
+}
+
+function renderBarChart(canvasId, chartKey, labels, data, label, color) {
+  if (analyticsCharts[chartKey]) analyticsCharts[chartKey].destroy();
+  var ctx = document.getElementById(canvasId).getContext('2d');
+  analyticsCharts[chartKey] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{ label: label, data: data, backgroundColor: color + '80', borderColor: color, borderWidth: 1 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
+  });
+}
+
+function renderDualLineChart(canvasId, chartKey, labels, data1, data2) {
+  if (analyticsCharts[chartKey]) analyticsCharts[chartKey].destroy();
+  var ctx = document.getElementById(canvasId).getContext('2d');
+  analyticsCharts[chartKey] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Questions', data: data1, borderColor: '#6C5CE7', backgroundColor: '#6C5CE720', fill: true, tension: 0.3, pointRadius: 2 },
+        { label: 'Leads', data: data2, borderColor: '#10b981', backgroundColor: '#10b98120', fill: true, tension: 0.3, pointRadius: 2 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+  });
+}
+
+function renderDoughnutChart(canvasId, chartKey, labels, data) {
+  if (analyticsCharts[chartKey]) analyticsCharts[chartKey].destroy();
+  var ctx = document.getElementById(canvasId).getContext('2d');
+  analyticsCharts[chartKey] = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{ data: data, backgroundColor: ['#6C5CE7', '#10b981', '#f59e0b', '#ef4444', '#3b82f6'] }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+
+function clearCache() {
+  if (!confirm('Clear all cached responses?')) return;
+  fetch('/api/admin/cache/clear', { method: 'POST' }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.ok) toast('Cache cleared', 'success');
+  });
+}
+
+// ── Export CSV ──
+function exportCSV() {
+  fetch('/api/admin/leads?limit=10000').then(function(r) { return r.json(); }).then(function(data) {
+    if (!data.leads || data.leads.length === 0) { toast('No leads to export', 'error'); return; }
+    var headers = ['id', 'type', 'email', 'phone', 'name', 'company', 'property_type', 'units', 'country', 'region', 'created_at'];
+    var csv = headers.join(',') + '\n';
+    data.leads.forEach(function(l) {
+      csv += headers.map(function(h) {
+        var v = (l[h] || '').toString().replace(/"/g, '""');
+        return '"' + v + '"';
+      }).join(',') + '\n';
+    });
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'leads-' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+    toast('CSV exported', 'success');
+  });
+}
+
+// ── Helpers ──
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+function toast(msg, type) {
+  var el = document.createElement('div');
+  el.className = 'toast toast-' + type;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(function() { el.remove(); }, 3000);
+}
+
+// ── Init ──
+checkAuth();
+</script>
+</body>
+</html>
